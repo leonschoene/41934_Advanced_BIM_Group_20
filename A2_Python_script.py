@@ -32,5 +32,3 @@ print('beams: ', len(beams))
 print('columns: ', len(columns))
 print('slab: ', len(slab))
 
-
-# Test if changes work from VS
