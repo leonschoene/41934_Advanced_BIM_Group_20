@@ -18,18 +18,21 @@ except OSError:
         print(f"ERROR: please check your model folder : {model_url} does not exist")
 
 # Your script goes here
-# First part: count elements 
+# 1. part: count elements 
 beams = model.by_type('IfcBeam')
 columns = model.by_type('IfcColumn')
 slab = model.by_type('IfcSlab')
 
 print('beams: ', len(beams))
-print('columns: ', columns)
+print('columns: ', len(columns))
 print('slab: ', len(slab))
 
+#2. part: assign nodes to the elements
+
+#3. part: create structural model
 
 
 # Test if everything works from teacher Martina: 
-spaces = model.by_type("IfcBeamType")
-for space in spaces:
-    print(space.HasPropertySets)
+# spaces = model.by_type("IfcBeamType")
+# for space in spaces:
+#     print(space.HasPropertySets)
