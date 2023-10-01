@@ -27,6 +27,8 @@ print('beams: ', len(beams))
 print('columns: ', len(columns))
 print('slab: ', len(slab))
 
+
+
 #2. part: assign nodes to the elements
 def assign_nodes_to_elements(model):
     elements = []
@@ -50,15 +52,27 @@ def get_nodes_from_geometry(element):
 
     nodes = []
 
-    if 'Representation' in element:
-        representation = element.Representation
-        for item in representation.Items:
-            if 'Coordinates' in item:
-                coordinates = item.Coordinates
-                for coord in coordinates:
-                    nodes.append({'x': coord[0], 'y': coord[1], 'z': coord[2]})
+    # if 'Representation' in element:
+    #     representation = element.Representation
+    #     for item in representation.Items:
+    #         if 'Coordinates' in item:
+    #             coordinates = item.Coordinates
+    #             for coord in coordinates:
+    #                 nodes.append({'x': coord[0], 'y': coord[1], 'z': coord[2]})
+
+    element = model.by_type('IfcBeam')
+
+    if hasattr(element, "ObjectPlacement"):
+
+    # Zugriff auf die globalen Koordinaten (doesn't work)
+        global_coordinates = element.ObjectPlacement.RelativePlacement.Location.Coordinates
+        print("Globale Koordinaten des Elements:", global_coordinates)
+
+    else:
+        print("Das Element hat keine 'ObjectPlacement'-Informationen.")
 
     return nodes
+
 
 #3. part: create structural model
 if __name__ == '__main__':
@@ -66,6 +80,14 @@ if __name__ == '__main__':
 
     elements = assign_nodes_to_elements(ifc_file)
 
+elements = assign_nodes_to_elements(model)
+
+for element in elements:
+        print(f"Element ID: {element['element_id']}")
+        print("Nodes:")
+        for node in element['nodes']:
+            print(f"  - ({node['x']}, {node['y']}, {node['z']})")
+        print("\n")
 
 # Test if everything works from teacher Martina: 
 # spaces = model.by_type("IfcBeamType")
