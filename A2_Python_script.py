@@ -28,8 +28,43 @@ print('columns: ', len(columns))
 print('slab: ', len(slab))
 
 #2. part: assign nodes to the elements
+def assign_nodes_to_elements(model):
+    elements = []
+
+    for element in model.by_type('IfcColumn'):
+        nodes = get_nodes_from_geometry(element)
+        columns.append({'element_id': element.id(), 'nodes': nodes})
+
+    for element in model.by_type('IfcBeam'):
+        nodes = get_nodes_from_geometry(element)
+        beams.append({'element_id': element.id(), 'nodes': nodes})
+
+    # maybe slabs too???
+
+    return elements
+
+def get_nodes_from_geometry(element):
+# Here we have to analyze the geometry information of the element and extract the corresponding nodes. 
+# This could be complex and depends on the structure of our IFC file.
+# Here is an example:
+
+    nodes = []
+
+    if 'Representation' in element:
+        representation = element.Representation
+        for item in representation.Items:
+            if 'Coordinates' in item:
+                coordinates = item.Coordinates
+                for coord in coordinates:
+                    nodes.append({'x': coord[0], 'y': coord[1], 'z': coord[2]})
+
+    return nodes
 
 #3. part: create structural model
+if __name__ == '__main__':
+    ifc_file = model
+
+    elements = assign_nodes_to_elements(ifc_file)
 
 
 # Test if everything works from teacher Martina: 
