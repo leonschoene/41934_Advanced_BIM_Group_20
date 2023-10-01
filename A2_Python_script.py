@@ -4,6 +4,7 @@ from pathlib import Path
 
 modelname = "LLYN - STRU"
 
+# Code from teacher Martina for testing
 try:
     dir_path = Path(__file__).parent
     model_url = Path.joinpath(dir_path, 'model', modelname).with_suffix('.ifc')
@@ -17,18 +18,18 @@ except OSError:
         print(f"ERROR: please check your model folder : {model_url} does not exist")
 
 # Your script goes here
-
-# Test if everything works:
-spaces = model.by_type("IfcBeamType")
-for space in spaces:
-    print(space.HasPropertySets)
-
-
+# First part: count elements 
 beams = model.by_type('IfcBeam')
 columns = model.by_type('IfcColumn')
 slab = model.by_type('IfcSlab')
 
 print('beams: ', len(beams))
-print('columns: ', len(columns))
+print('columns: ', columns)
 print('slab: ', len(slab))
 
+
+
+# Test if everything works from teacher Martina: 
+spaces = model.by_type("IfcBeamType")
+for space in spaces:
+    print(space.HasPropertySets)
