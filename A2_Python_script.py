@@ -115,3 +115,4 @@ print(beams)
 # spaces = model.by_type("IfcBeamType")
 # for space in spaces:
 #     print(space.HasPropertySets)
+#     print(space.HasPropertySets)
