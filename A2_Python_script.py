@@ -137,3 +137,4 @@ print(coordinates)
 # spaces = model.by_type("IfcBeamType")
 # for space in spaces:
 #     print(space.HasPropertySets)
+#AAaaa
