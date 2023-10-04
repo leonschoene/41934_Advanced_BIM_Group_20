@@ -6,6 +6,7 @@ import ifcopenshell.util.placement
 import ifcopenshell.util.selector
 from pathlib import Path
 import numpy as np
+import math
 
 modelname = "LLYN - STRU"
 
@@ -85,7 +86,7 @@ def get_nodes_from_geometry(element):
 #     elements = assign_nodes_to_elements(model)
 
 
-# Erstelle eine Liste, in der die Koordinaten jedes Beams gespeichert werden
+# Create list with all beams 
 beam_values = []
 
 def get_beam_values():
@@ -100,6 +101,8 @@ def get_beam_values():
         shape = ifcopenshell.geom.create_shape(settings, beam)
         matrix = shape.transformation.matrix.data
         matrix = ifcopenshell.util.shape.get_shape_matrix(shape)
+        plane = get_beam_plane(beam)
+        direction = get_direction(beam)
         beam ={
             'Tag' : id,
             'X' : x,
@@ -107,22 +110,16 @@ def get_beam_values():
             'Z' : z,
             'Slope' : slope,
             'Length' : length,
-            'Matrix' : matrix
+            'Matrix' : matrix,
+            'Plane' : plane,
+            'Direction' : direction
         }
         beam_values.append(beam)
 
     return beam_values
 
-# beams = get_beam_values()
-# print(beams)
-
-# with open('liste.txt', 'w') as f:
-#     for element in beams:
-#         f.write(str(element) + '\n')
-
-beam = model.by_guid('1gWnGCa$TAouEuWitQnG8_')
-
-def get_beam_plane():
+# find the plane or the direction in that the beam extend
+def get_beam_plane(beam):
     settings = ifcopenshell.geom.settings()
     shape = ifcopenshell.geom.create_shape(settings, beam)
     slope = ifcopenshell.util.selector.get_element_value(beam, 'Pset_BeamCommon.Slope')
@@ -187,8 +184,35 @@ def get_beam_plane():
     sorted_plane = sorted(plane)
     return sorted_plane
 
+def get_direction(beam):
+    slope = ifcopenshell.util.selector.get_element_value(beam, 'Pset_BeamCommon.Slope')
+    settings = ifcopenshell.geom.settings()
+    shape = ifcopenshell.geom.create_shape(settings, beam)
+    matrix = shape.transformation.matrix.data
+    matrix = ifcopenshell.util.shape.get_shape_matrix(shape)
+    rotationmatrix = matrix[:3,:3]
+
+    if get_beam_plane == ['y','z'] or ['y'] or ['z']:
+        v_lokal = np.array([[0], [math.cos(math.radians(slope))], [math.sin(math.radians(slope))]])
+    elif get_beam_plane == ['x' and 'z'] or ['z']:
+        v_lokal = np.array([[math.cos(math.radians(slope))], [0], [math.sin(math.radians(slope))]])
+    elif get_beam_plane == ['x','y'] or ['x'] or ['y']:
+        v_lokal = np.array([[math.cos(math.radians(slope))], [math.sin(math.radians(slope))], [0]])
+    else:
+        print('Error')
+
+    v_global = rotationmatrix @ v_lokal
+
+    return v_global
 
 
+
+beams = get_beam_values()
+print(beams)
+
+with open('liste.txt', 'w') as f:
+    for element in beams:
+        f.write(str(element) + '\n')
 
 
 
