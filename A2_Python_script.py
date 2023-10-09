@@ -7,6 +7,7 @@ import ifcopenshell.util.selector
 from pathlib import Path
 import numpy as np
 import math
+import matplotlib.pyplot as plt
 
 modelname = "LLYN - STRU"
 
@@ -103,6 +104,8 @@ def get_beam_values():
         matrix = ifcopenshell.util.shape.get_shape_matrix(shape)
         plane = get_beam_plane(beam)
         direction = get_direction(beam)
+        mesh = get_beam_coordinates(beam)
+        mesh_center = get_mesh_center(mesh)
         beam ={
             'Tag' : id,
             'X' : x,
@@ -112,7 +115,8 @@ def get_beam_values():
             'Length' : length,
             'Matrix' : matrix,
             'Plane' : plane,
-            'Direction' : direction
+            'Direction' : direction,
+            'Mesh center' : mesh_center
         }
         beam_values.append(beam)
 
@@ -192,11 +196,11 @@ def get_direction(beam):
     matrix = ifcopenshell.util.shape.get_shape_matrix(shape)
     rotationmatrix = matrix[:3,:3]
 
-    if get_beam_plane == ['y','z'] or ['y'] or ['z']:
+    if get_beam_plane == ['y','z'] or ['y']:
         v_lokal = np.array([[0], [math.cos(math.radians(slope))], [math.sin(math.radians(slope))]])
-    elif get_beam_plane == ['x' and 'z'] or ['z']:
+    elif get_beam_plane == ['x','z'] or ['z']:
         v_lokal = np.array([[math.cos(math.radians(slope))], [0], [math.sin(math.radians(slope))]])
-    elif get_beam_plane == ['x','y'] or ['x'] or ['y']:
+    elif get_beam_plane == ['x','y'] or ['x']:
         v_lokal = np.array([[math.cos(math.radians(slope))], [math.sin(math.radians(slope))], [0]])
     else:
         print('Error')
@@ -205,14 +209,6 @@ def get_direction(beam):
 
     return v_global
 
-
-# Get list over searching for plane
-# beams = get_beam_values()
-# print(beams)
-
-# with open('liste.txt', 'w') as f:
-#     for element in beams:
-#         f.write(str(element) + '\n')
 
 def get_coordinates(beam):
     settings = ifcopenshell.geom.settings()
@@ -252,9 +248,58 @@ def get_beam_coordinates(beam):
     mesh_abs = mesh @ matrix.T
     # delete the last column of each axis
     mesh_abs = np.take(mesh_abs, [0, 1, 2], axis=1)
+
+    return mesh_abs
+
+
+def get_mesh_center(mesh):
+    # Calculate the mean of the mesh coordinates
+    mesh_center = np.mean(mesh, axis=0)
+
+    return mesh_center
     
+###############################################################################
+# Code for the entire model, store values for all beams in the list
 
+# Get list over searching for plane
+# beams = get_beam_values()
+# print(beams)
 
+# with open('liste.txt', 'w') as f:
+#     for element in beams:
+#         f.write(str(element) + '\n')
+
+# Code for one element for testing
+
+beam = model.by_type('IfcBeam')[2]
+print('Tag:', beam.Tag)
+beam_coordinates = get_beam_coordinates(beam)
+mesh = get_beam_coordinates(beam)
+
+# Calculate the mesh center
+mesh_center = get_mesh_center(mesh)
+
+# Get the x, y, and z coordinates of the beam
+x = beam_coordinates[:, 0]
+y = beam_coordinates[:, 1]
+z = beam_coordinates[:, 2].reshape(-1, 1)
+
+# Plot the beam in 3D
+fig = plt.figure()
+ax = fig.add_subplot(projection='3d')
+ax.scatter(x, y, z)
+#ax.set_aspect('equal')
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_zlabel('z')
+
+# Plot the mesh center
+ax.plot(mesh_center[0], mesh_center[1], mesh_center[2], 'b*')
+
+# Show the plot
+plt.show()
+
+print(mesh_center)
 
 
 # Test if everything works from teacher Martina: 
