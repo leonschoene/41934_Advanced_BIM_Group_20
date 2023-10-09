@@ -206,13 +206,54 @@ def get_direction(beam):
     return v_global
 
 
+# Get list over searching for plane
+# beams = get_beam_values()
+# print(beams)
 
-beams = get_beam_values()
-print(beams)
+# with open('liste.txt', 'w') as f:
+#     for element in beams:
+#         f.write(str(element) + '\n')
 
-with open('liste.txt', 'w') as f:
-    for element in beams:
-        f.write(str(element) + '\n')
+def get_coordinates(beam):
+    settings = ifcopenshell.geom.settings()
+    shape = ifcopenshell.geom.create_shape(settings, beam)
+    verts = shape.geometry.verts
+    grouped_verts = ifcopenshell.util.shape.get_vertices(shape.geometry)
+    matrix = shape.transformation.matrix.data
+    matrix = ifcopenshell.util.shape.get_shape_matrix(shape)
+
+    vertices = []
+    for shell in beam.get_open_shells():
+        for vertex in shell.get_vertices():
+            vertices.append(vertex.get_coordinates())
+
+    mesh = np.array(vertices)
+    v = np.array([vertices[0],vertices[1],vertices[2],1])
+
+    v_abs = matrix @ v
+    v_abs = np.array([v_abs[0],v_abs[1],v_abs[2]])
+
+    return v_abs
+
+
+def get_beam_coordinates(beam):
+    settings = ifcopenshell.geom.settings()
+    shape = ifcopenshell.geom.create_shape(settings, beam)
+    verts = shape.geometry.verts
+    grouped_verts = ifcopenshell.util.shape.get_vertices(shape.geometry)
+    matrix = shape.transformation.matrix.data
+    matrix = ifcopenshell.util.shape.get_shape_matrix(shape)
+
+    # put grouped verts in np.array
+    grouped_verts = np.array(grouped_verts)
+    # insert '1' to each axis 
+    mesh = np.insert(grouped_verts,3,1, axis=1)
+    # multily the mesh with the original matrix (rotation and position)
+    mesh_abs = mesh @ matrix.T
+    # delete the last column of each axis
+    mesh_abs = np.take(mesh_abs, [0, 1, 2], axis=1)
+    
+
 
 
 
