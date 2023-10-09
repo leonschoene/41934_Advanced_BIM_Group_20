@@ -196,11 +196,11 @@ def get_direction(beam):
     matrix = ifcopenshell.util.shape.get_shape_matrix(shape)
     rotationmatrix = matrix[:3,:3]
 
-    if get_beam_plane == ['y','z'] or ['y']:
+    if get_beam_plane == ['y'and'z'] or ['y']:
         v_lokal = np.array([[0], [math.cos(math.radians(slope))], [math.sin(math.radians(slope))]])
-    elif get_beam_plane == ['x','z'] or ['z']:
+    elif get_beam_plane == ['x'and'z'] or ['z']:
         v_lokal = np.array([[math.cos(math.radians(slope))], [0], [math.sin(math.radians(slope))]])
-    elif get_beam_plane == ['x','y'] or ['x']:
+    elif get_beam_plane == ['x'and'y'] or ['x']:
         v_lokal = np.array([[math.cos(math.radians(slope))], [math.sin(math.radians(slope))], [0]])
     else:
         print('Error')
@@ -258,51 +258,57 @@ def get_mesh_center(mesh):
 
     return mesh_center
     
-###############################################################################
-# Code for the entire model, store values for all beams in the list
+#####################################################################
+# Code for the entire model, store values for all beams in the list #
+#####################################################################
 
 # Get list over searching for plane
-# beams = get_beam_values()
-# print(beams)
+beams = get_beam_values()
 
-# with open('liste.txt', 'w') as f:
-#     for element in beams:
-#         f.write(str(element) + '\n')
+with open('liste.txt', 'w') as f:
+    for element in beams:
+        f.write(str(element) + '\n')
 
-# Code for one element for testing
+print('List with all beams is create and safed to liste.txt')
 
-beam = model.by_type('IfcBeam')[2]
-print('Tag:', beam.Tag)
-beam_coordinates = get_beam_coordinates(beam)
-mesh = get_beam_coordinates(beam)
+####################################
+# Code for one element for testing #
+####################################
 
-# Calculate the mesh center
-mesh_center = get_mesh_center(mesh)
+# beam = model.by_type('IfcBeam')[2]
+# print('Tag:', beam.Tag)
+# beam_coordinates = get_beam_coordinates(beam)
+# mesh = get_beam_coordinates(beam)
 
-# Get the x, y, and z coordinates of the beam
-x = beam_coordinates[:, 0]
-y = beam_coordinates[:, 1]
-z = beam_coordinates[:, 2].reshape(-1, 1)
+# # Calculate the mesh center
+# mesh_center = get_mesh_center(mesh)
 
-# Plot the beam in 3D
-fig = plt.figure()
-ax = fig.add_subplot(projection='3d')
-ax.scatter(x, y, z)
-#ax.set_aspect('equal')
-ax.set_xlabel('x')
-ax.set_ylabel('y')
-ax.set_zlabel('z')
+# # Get the x, y, and z coordinates of the beam
+# x = beam_coordinates[:, 0]
+# y = beam_coordinates[:, 1]
+# z = beam_coordinates[:, 2].reshape(-1, 1)
 
-# Plot the mesh center
-ax.plot(mesh_center[0], mesh_center[1], mesh_center[2], 'b*')
+# # Plot the beam in 3D
+# fig = plt.figure()
+# ax = fig.add_subplot(projection='3d')
+# ax.scatter(x, y, z)
+# #ax.set_aspect('equal')
+# ax.set_xlabel('x')
+# ax.set_ylabel('y')
+# ax.set_zlabel('z')
 
-# Show the plot
-plt.show()
+# # Plot the mesh center
+# ax.plot(mesh_center[0], mesh_center[1], mesh_center[2], 'b*')
 
-print(mesh_center)
+# # Show the plot
+# plt.show()
 
+# print(mesh_center)
 
-# Test if everything works from teacher Martina: 
+##################################################
+# Test if everything works from teacher Martina: #
+##################################################
+
 # spaces = model.by_type("IfcBeamType")
 # for space in spaces:
 #     print(space.HasPropertySets)
