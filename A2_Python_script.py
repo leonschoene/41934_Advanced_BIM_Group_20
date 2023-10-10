@@ -324,9 +324,9 @@ for element in beam_values:
         print(len(sp), len(ep))
 
 # optinal titles
-ax.set_xlabel('X-Achse')
-ax.set_ylabel('Y-Achse')
-ax.set_zlabel('Z-Achse')
+ax.set_xlabel('X-Axis')
+ax.set_ylabel('Y-Axis')
+ax.set_zlabel('Z-Axis')
 ax.set_title('3D Plot of start- and endpoints')
 
 # Show 3D-Plot
