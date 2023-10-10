@@ -103,7 +103,6 @@ def get_beam_values():
         matrix = shape.transformation.matrix.data
         matrix = ifcopenshell.util.shape.get_shape_matrix(shape)
         plane = get_beam_plane(beam)
-        direction = get_direction(beam)
         mesh = get_beam_coordinates(beam)
         mesh_center = get_mesh_center(mesh)
         beam ={
@@ -115,7 +114,6 @@ def get_beam_values():
             'Length' : length,
             'Matrix' : matrix,
             'Plane' : plane,
-            'Direction' : direction,
             'Mesh center' : mesh_center
         }
         beam_values.append(beam)
@@ -129,6 +127,10 @@ def get_beam_plane(beam):
     slope = ifcopenshell.util.selector.get_element_value(beam, 'Pset_BeamCommon.Slope')
     verts = shape.geometry.verts
     grouped_verts = ifcopenshell.util.shape.get_vertices(shape.geometry)
+    matrix = shape.transformation.matrix.data
+    matrix = ifcopenshell.util.shape.get_shape_matrix(shape)
+    rotationmatrix = matrix[:3,:3]
+    v_lokal = np.array([[0], [0], [0]])
 
     # Set all max differences of points equal 0
     max_diff_x = 0
@@ -155,11 +157,26 @@ def get_beam_plane(beam):
     if slope == 0: # a horizontal beam has no second direction, it extend only in one axis
         if max_diff_value == max_diff_x:
             plane = 'x'
+            plane_value = 1
         elif max_diff_value == max_diff_y:
             plane = 'y'
+            plane_value = 2
         else:
             plane = 'z'
-        return plane
+            plane_value = 3
+        
+        if plane_value == 1 or plane_value == 12:
+            v_lokal = np.array([[math.cos(math.radians(slope))], [math.sin(math.radians(slope))], [0]])
+        elif plane_value == 2 or plane_value == 23:
+            v_lokal = np.array([[0], [math.cos(math.radians(slope))], [math.sin(math.radians(slope))]])
+        elif plane_value == 3 or plane_value == 13:
+            v_lokal = np.array([[math.cos(math.radians(slope))], [0], [math.sin(math.radians(slope))]])
+        else:
+            print('No plane founded')
+
+        v_global = rotationmatrix @ v_lokal
+        return (plane, plane_value, v_global)
+    
     else: # if beam has a slope, it also has a second direction that is >> third direction which is his own depth
         max_diff_list = sorted([max_diff_x, max_diff_y, max_diff_z], reverse=True) # sort the list 
 
@@ -169,45 +186,45 @@ def get_beam_plane(beam):
         # look which direction has the biggest difference
         if first_max_diff == max_diff_x:
             first_direction = "x"
+            first_plane_value = 1
         elif first_max_diff == max_diff_y:
             first_direction = "y"
+            first_plane_value = 2
         else:
             first_direction = "z"
+            first_plane_value = 3
 
         # look which direction has the second biggest difference
         if second_max_diff == max_diff_x:
             second_direction = "x"
+            second_plane_value = 2
         elif second_max_diff == max_diff_y:
             second_direction = "y"
+            second_plane_value = 2
         else:
             second_direction = "z"
-
+            second_plane_value = 3
+        
         # create list of the plane and sort that alphabetical, so that we get xy-, xz-, or yz-plane
-        plane = [first_direction, second_direction]
-    
-    sorted_plane = sorted(plane)
-    return sorted_plane
+        plane = [first_direction,second_direction]
+        plane_value = [first_plane_value,second_plane_value]
+        sorted_plane_value = sorted(plane_value)
+        sorted_plane_value = list(map(str, sorted_plane_value))
+        plane_value = int("".join(sorted_plane_value))
 
-def get_direction(beam):
-    slope = ifcopenshell.util.selector.get_element_value(beam, 'Pset_BeamCommon.Slope')
-    settings = ifcopenshell.geom.settings()
-    shape = ifcopenshell.geom.create_shape(settings, beam)
-    matrix = shape.transformation.matrix.data
-    matrix = ifcopenshell.util.shape.get_shape_matrix(shape)
-    rotationmatrix = matrix[:3,:3]
-
-    if get_beam_plane == ['y'and'z'] or ['y']:
-        v_lokal = np.array([[0], [math.cos(math.radians(slope))], [math.sin(math.radians(slope))]])
-    elif get_beam_plane == ['x'and'z'] or ['z']:
-        v_lokal = np.array([[math.cos(math.radians(slope))], [0], [math.sin(math.radians(slope))]])
-    elif get_beam_plane == ['x'and'y'] or ['x']:
+    if plane_value == 1 or plane_value == 12:
         v_lokal = np.array([[math.cos(math.radians(slope))], [math.sin(math.radians(slope))], [0]])
+    elif plane_value == 2 or plane_value == 23:
+        v_lokal = np.array([[0], [math.cos(math.radians(slope))], [math.sin(math.radians(slope))]])
+    elif plane_value == 3 or plane_value == 13:
+        v_lokal = np.array([[math.cos(math.radians(slope))], [0], [math.sin(math.radians(slope))]])
     else:
-        print('Error')
+        print('No plane founded')
 
     v_global = rotationmatrix @ v_lokal
 
-    return v_global
+    sorted_plane = sorted(plane)
+    return (sorted_plane, plane_value, v_global)
 
 
 def get_coordinates(beam):
