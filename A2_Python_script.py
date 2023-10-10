@@ -304,6 +304,34 @@ with open('liste.txt', 'w') as f:
 
 print('List with all beams is create and safed to liste.txt')
 
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+# Iterate over list beam_values and plot lines between start- and endpunkt
+for element in beam_values:
+    sp = element['Startpoint']
+    ep = element['Endpoint']
+
+    if sp.shape == (1, 3) and ep.shape == (1, 3):
+        x_start, y_start, z_start = sp[0]
+        x_end, y_end, z_end = ep[0]
+
+        # Plot lines between start- and endpunkt
+        ax.plot([x_start, x_end], [y_start, y_end], [z_start, z_end], marker='o')
+    
+    else:
+        print('Beam has no correct array')
+        print(len(sp), len(ep))
+
+# optinal titles
+ax.set_xlabel('X-Achse')
+ax.set_ylabel('Y-Achse')
+ax.set_zlabel('Z-Achse')
+ax.set_title('3D Plot of start- and endpoints')
+
+# Show 3D-Plot
+plt.show()
+
 ####################################
 # Code for one element for testing #
 ####################################
