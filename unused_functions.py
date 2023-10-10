@@ -1,3 +1,12 @@
+#######################################################################
+#######################################################################
+## storage file for all functions we don't need in the main program, ##
+## but we also did't delete these function. Maybe there is a later   ##
+## usecase for them.                                                 ##
+#######################################################################
+#######################################################################
+
+
 # def get_direction(beam):
 #     slope = ifcopenshell.util.selector.get_element_value(beam, 'Pset_BeamCommon.Slope')
 #     settings = ifcopenshell.geom.settings()

@@ -105,6 +105,8 @@ def get_beam_values():
         plane = get_beam_plane(beam)
         mesh = get_beam_coordinates(beam)
         mesh_center = get_mesh_center(mesh)
+        startpoint = get_startpoint(mesh_center, length, plane[2])
+        endpoint = get_endpoint(mesh_center, length, plane[2])
         beam ={
             'Tag' : id,
             'X' : x,
@@ -114,7 +116,9 @@ def get_beam_values():
             'Length' : length,
             'Matrix' : matrix,
             'Plane' : plane,
-            'Mesh center' : mesh_center
+            'Mesh center' : mesh_center,
+            'Startpoint' : startpoint,
+            'Endpoint' : endpoint
         }
         beam_values.append(beam)
 
@@ -274,6 +278,18 @@ def get_mesh_center(mesh):
     mesh_center = np.mean(mesh, axis=0)
 
     return mesh_center
+
+def get_startpoint(mesh_center, length, direction):
+    # Calculate the startpoint from the beam
+    sp = mesh_center - length/2000*direction.T
+
+    return sp
+
+def get_endpoint(mesh_center, length, direction):
+    # Calculate the startpoint from the beam
+    ep = mesh_center + length/2000*direction.T
+
+    return ep
     
 #####################################################################
 # Code for the entire model, store values for all beams in the list #
