@@ -1,4 +1,3 @@
-import bpy 
 import ifcopenshell
 import ifcopenshell.geom
 import ifcopenshell.util.shape
@@ -452,8 +451,6 @@ column = model.by_guid('2Bbtc4Qtb4v9USChXqpW23')#[2]
 slope = ifcopenshell.util.selector.get_element_value(column, 'Qto_ColumnBaseQuantities.Slope')
 plane = get_column_plane(column)
 #length = ifcopenshell.util.selector.get_element_value(column, 'Qto_ColumnBaseQuantities.Length')
-columns = bpy.data.objects.filter(type='Column')
-length = column.get_column_length()
 print('length:', length)
 print('Tag:', column.Tag)
 print('Slope', slope)
