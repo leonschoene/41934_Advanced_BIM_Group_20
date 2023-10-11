@@ -55,8 +55,8 @@ def get_beam_values():
         plane = get_beam_plane(beam)
         mesh = get_element_coordinates(beam)
         mesh_center = get_mesh_center(mesh)
-        startpoint = get_startpoint(mesh_center, length, plane[2])
-        endpoint = get_endpoint(mesh_center, length, plane[2])
+        startpoint = get_startpoint_beam(mesh_center, length, plane[2])
+        endpoint = get_endpoint_beam(mesh_center, length, plane[2])
         beam ={
             'Tag' : id,
             'X' : x,
@@ -89,8 +89,8 @@ def get_column_values():
         plane = get_column_plane(column)
         mesh = get_element_coordinates(column)
         mesh_center = get_mesh_center(mesh)
-        startpoint = get_startpoint(mesh_center, length, plane[2])
-        endpoint = get_endpoint(mesh_center, length, plane[2])
+        startpoint = get_startpoint_col(mesh_center, plane[3], plane[2])
+        endpoint = get_endpoint_col(mesh_center, plane[3], plane[2])
         column ={
             'Tag' : id,
             'X' : x,
@@ -250,6 +250,7 @@ def get_column_plane(column):
 
     # look for the maximum difference between each axis 
     max_diff_value = max(max_diff_x, max_diff_y, max_diff_z)
+    length = max_diff_value
 
     if slope == None:
         plane = 'z'
@@ -257,7 +258,7 @@ def get_column_plane(column):
         v_lokal = np.array([[0], [0], [1]])
 
         v_global = rotationmatrix @ v_lokal # global direction vector
-        return (plane, plane_value, v_global)
+        return (plane, plane_value, v_global, length)
 
     elif slope == 0: # a horizontal beam has no second direction, it extend only in one axis
         if max_diff_value == max_diff_x:
@@ -281,7 +282,7 @@ def get_column_plane(column):
             print('Element Tag:', column.Tag)
 
         v_global = rotationmatrix @ v_lokal
-        return (plane, plane_value, v_global)
+        return (plane, plane_value, v_global, length)
     
     else: # if column has a slope, it also has a second direction that is >> third direction which is his own depth
         max_diff_list = sorted([max_diff_x, max_diff_y, max_diff_z], reverse=True) # sort the list 
@@ -332,7 +333,7 @@ def get_column_plane(column):
     v_global = rotationmatrix @ v_lokal
 
     sorted_plane = sorted(plane)
-    return (sorted_plane, plane_value, v_global)
+    return (sorted_plane, plane_value, v_global, length)
 
 
 def get_coordinates(element):
@@ -383,78 +384,102 @@ def get_mesh_center(mesh):
 
     return mesh_center
 
-def get_startpoint(mesh_center, length, direction):
-    # Calculate the startpoint from the element
-    sp = mesh_center - length/2000*direction.T
+def get_startpoint_beam(mesh_center, length, direction):
+    # Calculate the startpoint from the beam
+    sp_beam = mesh_center - length/2000*direction.T
 
-    return sp
+    return sp_beam
 
-def get_endpoint(mesh_center, length, direction):
-    # Calculate the startpoint from the element
-    ep = mesh_center + length/2000*direction.T
+def get_endpoint_beam(mesh_center, length, direction):
+    # Calculate the startpoint from the beam
+    ep_beam = mesh_center + length/2000*direction.T
 
-    return ep
+    return ep_beam
+
+def get_startpoint_col(mesh_center, length, direction):
+    # Calculate the startpoint from the column
+    sp_col = mesh_center - length/2*direction.T
+
+    return sp_col
+
+def get_endpoint_col(mesh_center, length, direction):
+    # Calculate the startpoint from the column
+    ep_col = mesh_center + length/2*direction.T
+
+    return ep_col
     
 #####################################################################
 # Code for the entire model, store values for all beams in the list #
 #####################################################################
 
 # Get list over searching for plane
-# beams = get_beam_values()
-# columns = get_column_values()
+beams = get_beam_values()
+columns = get_column_values()
 
-# with open('list_beams.txt', 'w') as f:
-#     for element in beams:
-#         f.write(str(element) + '\n')
+with open('list_beams.txt', 'w') as f:
+    for element in beams:
+        f.write(str(element) + '\n')
 
-# print('List with all beams is create and safed to list_beams.txt')
+print('List with all beams is create and safed to list_beams.txt')
 
-# with open('list_columns.txt', 'w') as f:
-#     for element in columns:
-#         f.write(str(element) + '\n')
+with open('list_columns.txt', 'w') as f:
+    for element in columns:
+        f.write(str(element) + '\n')
 
-# print('List with all columns is create and safed to list_columns.txt')
+print('List with all columns is create and safed to list_columns.txt')
 
-# fig = plt.figure()
-# ax = fig.add_subplot(111, projection='3d')
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
 
-# # Iterate over list beam_values and plot lines between start- and endpunkt
-# for element in beam_values:
-#     sp = element['Startpoint']
-#     ep = element['Endpoint']
+# Iterate over list beam_values and plot lines between start- and endpunkt
+for element in beam_values:
+    sp = element['Startpoint']
+    ep = element['Endpoint']
 
-#     if sp.shape == (1, 3) and ep.shape == (1, 3):
-#         x_start, y_start, z_start = sp[0]
-#         x_end, y_end, z_end = ep[0]
+    if sp.shape == (1, 3) and ep.shape == (1, 3):
+        x_start, y_start, z_start = sp[0]
+        x_end, y_end, z_end = ep[0]
 
-#         # Plot lines between start- and endpunkt
-#         ax.plot([x_start, x_end], [y_start, y_end], [z_start, z_end], marker='o')
+        # Plot lines between start- and endpunkt
+        ax.plot([x_start, x_end], [y_start, y_end], [z_start, z_end], marker='o')
     
-#     else:
-#         print('Beam has no correct array')
-#         print(len(sp), len(ep))
+    else:
+        print('Beam has no correct array')
+        print(len(sp), len(ep))
 
-# # optinal titles
-# ax.set_xlabel('X-Axis')
-# ax.set_ylabel('Y-Axis')
-# ax.set_zlabel('Z-Axis')
-# ax.set_title('3D Plot of start- and endpoints')
+# Iterate over list column_values and plot lines between start- and endpunkt
+for element in column_values:
+    sp = element['Startpoint']
+    ep = element['Endpoint']
 
-# # Show 3D-Plot
-# plt.show()
+    if sp.shape == (1, 3) and ep.shape == (1, 3):
+        x_start, y_start, z_start = sp[0]
+        x_end, y_end, z_end = ep[0]
+
+        # Plot lines between start- and endpunkt
+        ax.plot([x_start, x_end], [y_start, y_end], [z_start, z_end], marker='o')
+    
+    else:
+        print('Column has no correct array')
+        print(len(sp), len(ep))
+
+# optinal titles
+ax.set_xlabel('X-Axis')
+ax.set_ylabel('Y-Axis')
+ax.set_zlabel('Z-Axis')
+ax.set_title('3D Plot of start- and endpoints')
+
+# Show 3D-Plot
+plt.show()
 
 ####################################
 # Code for one element for testing #
 ####################################
 
-column = model.by_guid('2Bbtc4Qtb4v9USChXqpW23')#[2]
-slope = ifcopenshell.util.selector.get_element_value(column, 'Qto_ColumnBaseQuantities.Slope')
-plane = get_column_plane(column)
-#length = ifcopenshell.util.selector.get_element_value(column, 'Qto_ColumnBaseQuantities.Length')
-print('length:', length)
-print('Tag:', column.Tag)
-print('Slope', slope)
-print(plane)
+# column = model.by_guid('2Bbtc4Qtb4v9USChXqpW23')#[2]
+# plane = get_column_plane(column)
+# print(plane[3])
+# print(column.Tag)
 
 # beam_coordinates = get_beam_coordinates(beam)
 # mesh = get_beam_coordinates(beam)
