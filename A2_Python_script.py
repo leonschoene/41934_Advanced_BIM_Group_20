@@ -4,6 +4,7 @@ import ifcopenshell.util.shape
 import ifcopenshell.util.element
 import ifcopenshell.util.placement
 import ifcopenshell.util.selector
+import os
 from pathlib import Path
 import numpy as np
 import math
@@ -14,7 +15,8 @@ modelname = "LLYN - STRU"
 # Code from teacher Martina for testing
 try:
     dir_path = Path(__file__).parent
-    model_url = Path.joinpath(dir_path, 'model', modelname).with_suffix('.ifc')
+    model_rel_path = os.path.join('..', 'model', modelname + '.ifc')
+    model_url = dir_path.joinpath(model_rel_path)
     model = ifcopenshell.open(model_url)
 except OSError:
     try:
