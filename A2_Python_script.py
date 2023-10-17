@@ -48,6 +48,8 @@ def get_beam_values():
         x = ifcopenshell.util.selector.get_element_value(beam, 'x')
         y = ifcopenshell.util.selector.get_element_value(beam, 'y')
         z = ifcopenshell.util.selector.get_element_value(beam, 'z')
+        crosssection = ifcopenshell.util.selector.get_element_value(beam, 'Pset_ReinforcementBarPitchOfBeam.Description')
+        material = beam.HasAssociations[0].RelatingMaterial.Name
         slope = ifcopenshell.util.selector.get_element_value(beam, 'Pset_BeamCommon.Slope')
         length = ifcopenshell.util.selector.get_element_value(beam, 'Pset_BeamCommon.Span')
         settings = ifcopenshell.geom.settings()
@@ -70,7 +72,9 @@ def get_beam_values():
             'Plane' : plane,
             'Mesh center' : mesh_center,
             'Startpoint' : startpoint,
-            'Endpoint' : endpoint
+            'Endpoint' : endpoint,
+            'Cross-Section' :  crosssection,
+            'Material' : material
         }
         beam_values.append(beam)
 
@@ -82,6 +86,8 @@ def get_column_values():
         x = ifcopenshell.util.selector.get_element_value(column, 'x')
         y = ifcopenshell.util.selector.get_element_value(column, 'y')
         z = ifcopenshell.util.selector.get_element_value(column, 'z')
+        crosssection = ifcopenshell.util.selector.get_element_value(column, 'Pset_ReinforcementBarPitchOfColumn.Description')
+        material = column.HasAssociations[0].RelatingMaterial.Name
         slope = ifcopenshell.util.selector.get_element_value(column, 'Pset_ColumnCommon.Slope')
         length = ifcopenshell.util.selector.get_element_value(column, 'Qto_ColumnBaseQuantities.Span')
         settings = ifcopenshell.geom.settings()
@@ -104,7 +110,9 @@ def get_column_values():
             'Plane' : plane,
             'Mesh center' : mesh_center,
             'Startpoint' : startpoint,
-            'Endpoint' : endpoint
+            'Endpoint' : endpoint,
+            'Cross-section' : crosssection,
+            'Material' : material
         }
         column_values.append(column)
 
