@@ -14,7 +14,7 @@ modelname = "LLYN - STRU"
 
 # Code from teacher Martina for testing
 try:
-    dir_path = Path(__file__).parent
+    dir_path = Path(__file__).parent.parent
     model_rel_path = os.path.join('..', 'model', modelname + '.ifc')
     model_url = dir_path.joinpath(model_rel_path)
     model = ifcopenshell.open(model_url)
@@ -38,7 +38,7 @@ print('slab: ', len(slab))
 
 
 
-#2. part: Create list with all beams and get their values
+#2. part: Create lists and get their values
 beam_values = []
 column_values = []
 
@@ -426,17 +426,17 @@ def get_endpoint_col(mesh_center, length, direction):
 beams = get_beam_values()
 columns = get_column_values()
 
-with open('list_beams.txt', 'w') as f:
+with open(os.path.join(Path(__file__).parent, '..', 'results', 'list_beams.txt'), 'w') as f:
     for element in beams:
         f.write(str(element) + '\n')
 
-print('List with all beams is create and safed to list_beams.txt')
+print('List with all beams was created and safed to list_beams.txt')
 
-with open('list_columns.txt', 'w') as f:
+with open(os.path.join(Path(__file__).parent, '..', 'results', 'list_columns.txt'), 'w') as f:
     for element in columns:
         f.write(str(element) + '\n')
 
-print('List with all columns is create and safed to list_columns.txt')
+print('List with all columns was created and safed to list_columns.txt')
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
