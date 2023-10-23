@@ -5,4 +5,5 @@ Add material properties, e.g. the density, to the IFC model to calculate e.g. we
 ### 2. Model Use (BIM use)
 ## 3B: Propose a (design for a) tool / workflow
 ### 1. Process: 
+
 ### 2. description:

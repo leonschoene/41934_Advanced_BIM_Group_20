@@ -41,6 +41,7 @@ print('slab: ', len(slab))
 #2. part: Create lists and get their values
 beam_values = []
 column_values = []
+material_list = []
 
 def get_beam_values():
     for beam in model.by_type('IfcBeam'):
@@ -417,7 +418,24 @@ def get_endpoint_col(mesh_center, length, direction):
     ep_col = mesh_center + length/2*direction.T
 
     return ep_col
-    
+
+def get_material():
+    for element in model.by_type('IfcBeam'):
+        material = element.HasAssociations[0].RelatingMaterial.Name
+        print(material)
+        if material not in material_list:
+            material_list.append(material)
+
+    for element in model.by_type('IfcColumn'):
+        material = element.HasAssociations[0].RelatingMaterial.Name
+        print(material)
+        if material not in material_list:
+            material_list.append(material)
+
+    return material_list
+
+
+
 #####################################################################
 # Code for the entire model, store values for all beams in the list #
 #####################################################################
@@ -425,6 +443,7 @@ def get_endpoint_col(mesh_center, length, direction):
 # Get list over searching for plane
 beams = get_beam_values()
 columns = get_column_values()
+materials = get_material()
 
 with open(os.path.join(Path(__file__).parent, '..', 'results', 'list_beams.txt'), 'w') as f:
     for element in beams:
@@ -437,6 +456,12 @@ with open(os.path.join(Path(__file__).parent, '..', 'results', 'list_columns.txt
         f.write(str(element) + '\n')
 
 print('List with all columns was created and safed to list_columns.txt')
+
+with open(os.path.join(Path(__file__).parent, '..', 'results', 'materials.txt'), 'w') as f:
+    for element in materials:
+        f.write(str(element) + '\n')
+
+print('List with all materials was created and safed to materials.txt')
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
