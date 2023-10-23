@@ -1,4 +1,8 @@
 # Report
 ## 3A: Analyse use case
 ### 1. Goal
-### 2. Model use (BIM)
+Add material properties, e.g. the density, to the IFC model to calculate e.g. weight and dead load for each element.
+### 2. Model Use (BIM use)
+## 3B: Propose a (design for a) tool / workflow
+### 1. Process: 
+### 2. description:
