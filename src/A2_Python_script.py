@@ -419,7 +419,7 @@ def get_endpoint_col(mesh_center, length, direction):
 
     return ep_col
 
-def get_material():
+def get_materials():
     for element in model.by_type('IfcBeam'):
         material = element.HasAssociations[0].RelatingMaterial.Name
         print(material)
@@ -443,7 +443,7 @@ def get_material():
 # Get list over searching for plane
 beams = get_beam_values()
 columns = get_column_values()
-materials = get_material()
+materials = get_materials()
 
 with open(os.path.join(Path(__file__).parent, '..', 'results', 'list_beams.txt'), 'w') as f:
     for element in beams:
