@@ -552,3 +552,21 @@ plt.show()
 # for space in spaces:
 #     print(space.HasPropertySets)
 #     print(space.HasPropertySets)
+
+##################################
+# How to add a new property set: #
+##################################
+#import ifcopenshell.api
+#materials=model.by_type("IfcMaterial")
+#for material in materials:
+#    if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')=='Metal':
+#        pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon")
+#        ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":"78.5"})
+#        psets = ifcopenshell.util.element.get_psets(material)
+#        print(psets)
+#    if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')=='Concrete':
+#        pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon")
+#        ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":"24"})
+#        psets = ifcopenshell.util.element.get_psets(material)
+#        print(psets)
+#model.write(".../Github/41934_Advanced_BIM_Group_20/updated_model.ifc")
