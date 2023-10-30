@@ -569,6 +569,5 @@ for material in materials:
        ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":"24"})
        #psets = ifcopenshell.util.element.get_psets(material)
        #print(psets)
-
 model.write(os.path.join(Path(__file__).parent.parent.parent,'model','updated_model.ifc'))
 print('New file "updated_model.ifc" is in folder model created')
