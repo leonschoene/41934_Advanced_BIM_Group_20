@@ -561,13 +561,28 @@ materials=model.by_type("IfcMaterial")
 for material in materials:
    if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')=='Metal':
        pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon")
-       ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":"78.5"})
+       ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":"78.5"}) #Density [kN/m3]
+       #psets = ifcopenshell.util.element.get_psets(material)
+       #print(psets)
+       if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')=='MTH':
+       pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon")
+       ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":"78.5"}) #Density [kN/m3]
        #psets = ifcopenshell.util.element.get_psets(material)
        #print(psets)
    if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')=='Concrete':
        pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon")
-       ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":"24"})
+       ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":"24"}) #Density [kN/m3]
        #psets = ifcopenshell.util.element.get_psets(material)
-       #print(psets)
+       #print(psets) 
+    if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')=='Isolering':
+       pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon")
+       ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":"0.16"}) #Density [kN/m3]
+       #psets = ifcopenshell.util.element.get_psets(material)
+       #print(psets)     
+    if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')=='Isolering':
+       pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon")
+       ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":"0.16"}) #Density [kN/m3]
+       #psets = ifcopenshell.util.element.get_psets(material)
+       #print(psets)   
 model.write(os.path.join(Path(__file__).parent.parent.parent,'model','updated_model.ifc'))
 print('New file "updated_model.ifc" is in folder model created')
