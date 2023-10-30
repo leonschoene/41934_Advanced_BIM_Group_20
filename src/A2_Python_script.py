@@ -440,72 +440,72 @@ def get_materials():
 # Code for the entire model, store values for all beams in the list #
 #####################################################################
 
-# Get list over searching for plane
-beams = get_beam_values()
-columns = get_column_values()
-materials = get_materials()
+# # Get list over searching for plane
+# beams = get_beam_values()
+# columns = get_column_values()
+# materials = get_materials()
 
-with open(os.path.join(Path(__file__).parent, '..', 'results', 'list_beams.txt'), 'w') as f:
-    for element in beams:
-        f.write(str(element) + '\n')
+# with open(os.path.join(Path(__file__).parent, '..', 'results', 'list_beams.txt'), 'w') as f:
+#     for element in beams:
+#         f.write(str(element) + '\n')
 
-print('List with all beams was created and safed to list_beams.txt')
+# print('List with all beams was created and safed to list_beams.txt')
 
-with open(os.path.join(Path(__file__).parent, '..', 'results', 'list_columns.txt'), 'w') as f:
-    for element in columns:
-        f.write(str(element) + '\n')
+# with open(os.path.join(Path(__file__).parent, '..', 'results', 'list_columns.txt'), 'w') as f:
+#     for element in columns:
+#         f.write(str(element) + '\n')
 
-print('List with all columns was created and safed to list_columns.txt')
+# print('List with all columns was created and safed to list_columns.txt')
 
-with open(os.path.join(Path(__file__).parent, '..', 'results', 'materials.txt'), 'w') as f:
-    for element in materials:
-        f.write(str(element) + '\n')
+# with open(os.path.join(Path(__file__).parent, '..', 'results', 'materials.txt'), 'w') as f:
+#     for element in materials:
+#         f.write(str(element) + '\n')
 
-print('List with all materials was created and safed to materials.txt')
+# print('List with all materials was created and safed to materials.txt')
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
 
-# Iterate over list beam_values and plot lines between start- and endpunkt
-for element in beam_values:
-    sp = element['Startpoint']
-    ep = element['Endpoint']
+# # Iterate over list beam_values and plot lines between start- and endpunkt
+# for element in beam_values:
+#     sp = element['Startpoint']
+#     ep = element['Endpoint']
 
-    if sp.shape == (1, 3) and ep.shape == (1, 3):
-        x_start, y_start, z_start = sp[0]
-        x_end, y_end, z_end = ep[0]
+#     if sp.shape == (1, 3) and ep.shape == (1, 3):
+#         x_start, y_start, z_start = sp[0]
+#         x_end, y_end, z_end = ep[0]
 
-        # Plot lines between start- and endpunkt
-        ax.plot([x_start, x_end], [y_start, y_end], [z_start, z_end], marker='o')
+#         # Plot lines between start- and endpunkt
+#         ax.plot([x_start, x_end], [y_start, y_end], [z_start, z_end], marker='o')
     
-    else:
-        print('Beam has no correct array')
-        print(len(sp), len(ep))
+#     else:
+#         print('Beam has no correct array')
+#         print(len(sp), len(ep))
 
-# Iterate over list column_values and plot lines between start- and endpunkt
-for element in column_values:
-    sp = element['Startpoint']
-    ep = element['Endpoint']
+# # Iterate over list column_values and plot lines between start- and endpunkt
+# for element in column_values:
+#     sp = element['Startpoint']
+#     ep = element['Endpoint']
 
-    if sp.shape == (1, 3) and ep.shape == (1, 3):
-        x_start, y_start, z_start = sp[0]
-        x_end, y_end, z_end = ep[0]
+#     if sp.shape == (1, 3) and ep.shape == (1, 3):
+#         x_start, y_start, z_start = sp[0]
+#         x_end, y_end, z_end = ep[0]
 
-        # Plot lines between start- and endpunkt
-        ax.plot([x_start, x_end], [y_start, y_end], [z_start, z_end], marker='o')
+#         # Plot lines between start- and endpunkt
+#         ax.plot([x_start, x_end], [y_start, y_end], [z_start, z_end], marker='o')
     
-    else:
-        print('Column has no correct array')
-        print(len(sp), len(ep))
+#     else:
+#         print('Column has no correct array')
+#         print(len(sp), len(ep))
 
-# optinal titles
-ax.set_xlabel('X-Axis')
-ax.set_ylabel('Y-Axis')
-ax.set_zlabel('Z-Axis')
-ax.set_title('3D Plot of start- and endpoints')
+# # optinal titles
+# ax.set_xlabel('X-Axis')
+# ax.set_ylabel('Y-Axis')
+# ax.set_zlabel('Z-Axis')
+# ax.set_title('3D Plot of start- and endpoints')
 
-# Show 3D-Plot
-plt.show()
+# # Show 3D-Plot
+# plt.show()
 
 ####################################
 # Code for one element for testing #
@@ -556,17 +556,19 @@ plt.show()
 ##################################
 # How to add a new property set: #
 ##################################
-#import ifcopenshell.api
-#materials=model.by_type("IfcMaterial")
-#for material in materials:
-#    if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')=='Metal':
-#        pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon")
-#        ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":"78.5"})
-#        psets = ifcopenshell.util.element.get_psets(material)
-#        print(psets)
-#    if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')=='Concrete':
-#        pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon")
-#        ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":"24"})
-#        psets = ifcopenshell.util.element.get_psets(material)
-#        print(psets)
-#model.write(".../Github/41934_Advanced_BIM_Group_20/updated_model.ifc")
+import ifcopenshell.api
+materials=model.by_type("IfcMaterial")
+for material in materials:
+   if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')=='Metal':
+       pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon")
+       ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":"78.5"})
+       #psets = ifcopenshell.util.element.get_psets(material)
+       #print(psets)
+   if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')=='Concrete':
+       pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon")
+       ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":"24"})
+       #psets = ifcopenshell.util.element.get_psets(material)
+       #print(psets)
+
+model.write(os.path.join(Path(__file__).parent.parent.parent,'model','updated_model.ifc'))
+print('New file "updated_model.ifc" is in folder model created')
