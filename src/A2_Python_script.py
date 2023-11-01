@@ -553,45 +553,37 @@ def get_materials():
 #     print(space.HasPropertySets)
 #     print(space.HasPropertySets)
 
-##################################
-# How to add a new property set: #
-##################################
+#################################################
+# How to add a new property set from a csv file #
+#################################################
 import ifcopenshell.api
+import sys
+import csv
+import pandas as pd
 
 
 materials=model.by_type("IfcMaterial")
 materialList=ifcopenshell.util.selector.get_element_value(materials,'Identity.Class')
 materialList=list(set(materialList))
-with open(os.path.join(Path(__file__).parent, '..', 'results', 'list_material.txt'), 'w') as f:
+with open(os.path.join(Path(__file__).parent, '..', 'results', 'list_material.csv'), 'w',newline='') as f:
+    csv.writer(f).writerow(["Material","Density [kN/m3]"])
     for material in materialList:
-         f.write(str(material) + '\n')
-    print('List with all materials was created and safed to list_material.txt')
+         csv.writer(f).writerow([str(material)])
+    print('List with all materials was created and safed to list_material.csv')
+print("-----------------------------------------------------------")
+print("Please, modify the file list_material.csv, which is located in the results folder")
+choice=input("Please, press (Y) when it is done. If you want to end the process, press any other: ")
+choice=choice.lower()
+if choice!="y":
+    sys.exit("Process ended")
 
+materialproperties=pd.read_csv(open(os.path.join(Path(__file__).parent.parent, 'results', 'list_material.csv')))
+
+# Loop for adding density 
 for material in materials:
-    if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')=='Metal':
-       pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon")
-       ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":"78.5"}) #Density [kN/m3]
-       #psets = ifcopenshell.util.element.get_psets(material)
-       #print(psets)
-    if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')=='MTH':
-       pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon")
-       ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":"78.5"}) #Density [kN/m3]
-       #psets = ifcopenshell.util.element.get_psets(material)
-       #print(psets)
-    if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')=='Concrete':
-       pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon")
-       ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":"24"}) #Density [kN/m3]
-       #psets = ifcopenshell.util.element.get_psets(material)
-       #print(psets) 
-    if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')=='Isolering':
-       pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon")
-       ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":"0.16"}) #Density [kN/m3]
-       #psets = ifcopenshell.util.element.get_psets(material)
-       #print(psets)     
-    if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')=='Isolering':
-       pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon")
-       ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":"0.16"}) #Density [kN/m3]
-       #psets = ifcopenshell.util.element.get_psets(material)
-       #print(psets)   
+    for i in range(materialproperties.shape[0]):
+        if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')==materialproperties.iloc[i,0]:
+            pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon")
+            ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":materialproperties.iloc[i,1]})
 model.write(os.path.join(Path(__file__).parent.parent.parent,'model','updated_model.ifc'))
 print('New file "updated_model.ifc" is in folder model created')
