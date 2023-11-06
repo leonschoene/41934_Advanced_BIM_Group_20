@@ -16,4 +16,6 @@ The user has here the possibility to update data for external loads like wind, s
 Considering all the previous steps, all the data should be gathered in order to perform a structural analysis. Finally, a structural report can be created. Based on this final report, different modification can be carried out in order to improve the structural design. Then, the tool starts again with these potential improvements.
 ### Who will use it
 The tool can be used from architects to see if the designed structure can be build. But the main user should be an engineer to perform a structural analysis in less time. 
+## Process
+## Information Exchange
 
