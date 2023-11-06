@@ -23,4 +23,4 @@ The setup is not tested for slabs, foundations, or other structural elements.
 The information is written into a report that can be used to get a permit from authorities or as a readable version for persons that do not rely on the topic, e.g. various customers.
 The process can be iterative. In the beginning, there must be load-bearing elements before the tool starts. In the end, before the report is created, the user has to prove, that the results are acceptable.
 ## Information Exchange
-
+The minimum level of detail for our workflow to work is LOD 300, in which specific elements are confirmed as 3D object geometry with object dimensions, capacities, and connections defined. In this way, the start and end coordinate for each element can be obtained. After the workflow, the LOD will still be 300, but some additional material properties will be available for next stages.
