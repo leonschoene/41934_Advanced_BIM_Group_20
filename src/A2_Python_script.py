@@ -566,7 +566,8 @@ materials=model.by_type("IfcMaterial")
 materialList=ifcopenshell.util.selector.get_element_value(materials,'Identity.Class')
 materialList=list(set(materialList))
 with open(os.path.join(Path(__file__).parent, '..', 'results', 'list_material.csv'), 'w',newline='') as f:
-    csv.writer(f).writerow(["Material","Density [kN/m3]"])
+    properties=["Material","Density [kN/m3]","Concrete Compressive Strength [MPa]","Steel Yield Stress [MPa]","Steel Ultimate Stress [MPa]"]
+    csv.writer(f).writerow(properties)
     for material in materialList:
          csv.writer(f).writerow([str(material)])
     print('List with all materials was created and safed to list_material.csv')
@@ -582,8 +583,32 @@ materialproperties=pd.read_csv(open(os.path.join(Path(__file__).parent.parent, '
 # Loop for adding density 
 for material in materials:
     for i in range(materialproperties.shape[0]):
-        if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')==materialproperties.iloc[i,0]:
-            pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon")
-            ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":materialproperties.iloc[i,1]})
+        if materialproperties.iloc[i,1]!="nan":
+            if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')==materialproperties.iloc[i,0]:
+                pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon")
+                ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":materialproperties.iloc[i,1]})
+#Loop for adding concrete compressive strength
+for material in materials:
+    for i in range(materialproperties.shape[0]):
+        if materialproperties.iloc[i,2]!="nan":
+            if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')==materialproperties.iloc[i,0]:
+                pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialConcrete")
+                ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"CompressiveStrength":materialproperties.iloc[i,2]})
+#Loop for adding steel yield stress
+for material in materials:
+    for i in range(materialproperties.shape[0]):
+        if materialproperties.iloc[i,3]!="nan":
+            if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')==materialproperties.iloc[i,0]:
+                pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialSteel")
+                ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"YieldStress":materialproperties.iloc[i,3]})                
+#Loop for adding steel ultimate stress
+for material in materials:
+    for i in range(materialproperties.shape[0]):
+        if materialproperties.iloc[i,4]!="nan":
+            if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')==materialproperties.iloc[i,0]:
+                pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialSteel")
+                ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"UltimateStress":materialproperties.iloc[i,4]})
+
+
 model.write(os.path.join(Path(__file__).parent.parent.parent,'model','updated_model.ifc'))
 print('New file "updated_model.ifc" is in folder model created')
