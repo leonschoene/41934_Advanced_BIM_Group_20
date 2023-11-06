@@ -572,7 +572,7 @@ with open(os.path.join(Path(__file__).parent, '..', 'results', 'list_material.cs
          csv.writer(f).writerow([str(material)])
     print('List with all materials was created and safed to list_material.csv')
 print("-----------------------------------------------------------")
-print("Please, modify the file list_material.csv, which is located in the results folder")
+print("Please, modify the file list_material.csv, which is located in the results folder") # only use Excel for editing, otherwise the file cannot be safed because the file is in use
 choice=input("Please, press (Y) when it is done. If you want to end the process, press any other: ")
 choice=choice.lower()
 if choice!="y":
