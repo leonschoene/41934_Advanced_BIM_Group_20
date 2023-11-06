@@ -17,5 +17,6 @@ Considering all the previous steps, all the data should be gathered in order to 
 ### Who will use it
 The tool can be used from architects to see if the designed structure can be build. But the main user should be an engineer to perform a structural analysis in less time. 
 ## Process
+![](Process.md)
 ## Information Exchange
 
