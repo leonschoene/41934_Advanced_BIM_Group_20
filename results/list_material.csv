@@ -1,5 +1,5 @@
-Material,Density [kN/m3]
-Metal,10
-Concrete,100
-MTH,1000
-Isolering,0.1
+Material,Density [kN/m3],Concrete Compressive Strength [MPa],Steel Yield Stress [MPa],Steel Ultimate Stress [MPa]
+Metal,78.5,,500,860
+Concrete,24,30,,
+Isolering,1.8,,,
+MTH,78.5,,500,860
