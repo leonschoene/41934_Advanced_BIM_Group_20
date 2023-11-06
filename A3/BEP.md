@@ -15,6 +15,7 @@ At the end of this part the tool creates a new IFC file with the coordinates of 
 #### 2. Add material properties
 The purpose of this part of the tool is to add material properties to the IFC file that have not been defined yet, for example, material density, material compresive strength, etc. The script goes through all elements in the model and looks for the different materials. Afterwards, a CSV file is created with all materials that are defined in the model. The user's task is now to add manually specific material properties like density, compressive strength, yield strength and ultimate strength. The script will read the CSV file and will add the material properties from the CSV file and it will save the enriched model as a new IFC file called "updated_model.ifc".
 #### 3. Add different loads
+The user has here the possibility to upload data for external loads like wind, seismic, a snow loads and upload the support conditions of the model. 
 #### 4. Strucutral analysis
 ### Who will use it
 
