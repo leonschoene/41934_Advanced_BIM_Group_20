@@ -7,15 +7,10 @@ The tool should create a structural analysis report. That will be achieved by re
 #### 1. Create CSV file with coordinates
 The first part is a tool without the user's interaction. The user has to upload the IFC file to the tool and the tool starts to generate the coordinates for each element. 
 The script looks then for load bearing elements like beams and columns. In the case that the model contains no structural elements, the user gets a notification that the tool could not find any load bearing elements and the user has to upload a new file. If there are load bearing elements the tool extracts the start and end points of each element and write it to a list for beams and columns. The start and end points get the script from the vertices through ifcopenshell. Once the tool has the vertices in a matrix, it looks for the direction by looking for the first and second (in the case of a sloped beam/column) biggest distance and assigns a plane to the element. Afterwards, 
-gsgfdgfdgfd
-gdfg
 #### 2. Add material properties
+The purpose of this part of the tool is to add material properties to the IFC file that have not been defined yet, for example, material density, material compresive strength, etc. The script goes through all elements in the model and looks for the different materials. Afterwards, a CSV file is created with all materials that are defined in the model. The user's task is now to add manually specific material properties like density, compressive strength, yield strength and ultimate strength. The script will read the CSV file and will add the material properties from the CSV file and it will save the enriched model as a new IFC file called "updated_model.ifc".
 #### 3. Add different loads
 #### 4. Strucutral analysis
 ### Who will use it
-asdasd
-dasdas
-da
-da
-sda
+
 
