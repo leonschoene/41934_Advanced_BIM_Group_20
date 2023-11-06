@@ -11,3 +11,9 @@ The script looks then for load bearing elements like beams and columns. In the c
 #### 3. Add different loads
 #### 4. Strucutral analysis
 ### Who will use it
+asdasd
+dasdas
+da
+da
+sda
+
