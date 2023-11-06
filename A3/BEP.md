@@ -10,6 +10,7 @@ The script looks then for load bearing elements like beams and columns. In the c
 At the end of this part the tool creates a new IFC file with the coordinates of each element and connects the nodes with lines which are refered to the original element tag. This created IFC file can also now used for other programs like a FEM software or the user continues the script and add material properties to the model which is described in th next section. 
 #### 2. Add material properties
 #### 3. Add different loads
+The user has here the possibility to upload data for external loads like wind, seismic, a snow loads and upload the support conditions of the model. 
 #### 4. Strucutral analysis
 ### Who will use it
 
