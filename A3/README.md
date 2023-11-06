@@ -5,5 +5,5 @@ Add material properties, e.g. the density, compressive strength, and yield stren
 ### 2. Model Use (BIM use)
 ## 3B: Propose a (design for a) tool / workflow
 ### 1. Process: 
-![BPMN Use Case](https://example.com/path/to/svg.svg)
+![BPMN Use Case]([https://example.com/path/to/svg.svg](https://github.com/leonschoene/41934_Advanced_BIM_Group_20/blob/main/A3/BPMN_Group_20_A3.svg)https://github.com/leonschoene/41934_Advanced_BIM_Group_20/blob/main/A3/BPMN_Group_20_A3.svg)
 ### 2. Description:
