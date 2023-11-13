@@ -9,4 +9,5 @@ Structural engineers often need a simplified structural model from an architectu
 
 Additionally, a CSV file is created with all materials that are defined in the model and the user's task is to add manually specific material properties like density, compressive strength, yield strength, and ultimate strength. The script will read the CSV file and will add the material properties from the CSV file and it will save the enriched model as a new IFC file called "updated_model.ifc".
 
+
 A video showing the use case can be found on this link. (REMEMBER TO ATTACH LINK)
