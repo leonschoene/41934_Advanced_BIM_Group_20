@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 
 modelname = "LLYN - STRU"
 
-# Code from teacher Martina for testing if path directory works
+# Code from TA Martina for testing if path directory works
 try:
     dir_path = Path(__file__).parent.parent
     model_rel_path = os.path.join('..', 'model', modelname + '.ifc')
@@ -33,13 +33,13 @@ except OSError:
 
 # Main script
 # 1. part: count elements 
-beams = model.by_type('IfcBeam')
-columns = model.by_type('IfcColumn')
-slab = model.by_type('IfcSlab')
+beams = model.by_type('IfcBeam') #In model, filter all the elements by the type "IfcBeam"
+columns = model.by_type('IfcColumn') #In model, filter all the elements by the type "Ifcolumn"
+slab = model.by_type('IfcSlab') #In model, filter all the elements by the type "IfcSlab"
 
-print('beams: ', len(beams))
-print('columns: ', len(columns))
-print('slab: ', len(slab))
+print('beams: ', len(beams)) #Print the number of beams in the model
+print('columns: ', len(columns)) #Print the number of columns in the model
+print('slab: ', len(slab)) #Print the number of slabs in the model
 
 
 
@@ -52,15 +52,16 @@ material_list = []
 # Main function to collect information for every single beam and store it in the list "beam_values"
 def get_beam_values():
     for beam in model.by_type('IfcBeam'):
-        # variables collect different properties from a beam
+        # variables collect different properties from each beam
         id = ifcopenshell.util.selector.get_element_value(beam, 'Tag')
-        x = ifcopenshell.util.selector.get_element_value(beam, 'x')
+        # Original position (x,y,z) in which the element was created
+        x = ifcopenshell.util.selector.get_element_value(beam, 'x') 
         y = ifcopenshell.util.selector.get_element_value(beam, 'y')
         z = ifcopenshell.util.selector.get_element_value(beam, 'z')
-        crosssection = ifcopenshell.util.selector.get_element_value(beam, 'Pset_ReinforcementBarPitchOfBeam.Description')
-        material = beam.HasAssociations[0].RelatingMaterial.Name
-        slope = ifcopenshell.util.selector.get_element_value(beam, 'Pset_BeamCommon.Slope')
-        length = ifcopenshell.util.selector.get_element_value(beam, 'Pset_BeamCommon.Span')
+        crosssection = ifcopenshell.util.selector.get_element_value(beam, 'Pset_ReinforcementBarPitchOfBeam.Description') # Get the cross-section name of the element
+        material = beam.HasAssociations[0].RelatingMaterial.Name # Get the material name for each elememt
+        slope = ifcopenshell.util.selector.get_element_value(beam, 'Pset_BeamCommon.Slope') # Get the slope of each element, measured in degrees.
+        length = ifcopenshell.util.selector.get_element_value(beam, 'Pset_BeamCommon.Span') # Get the length of each element
         settings = ifcopenshell.geom.settings()
         shape = ifcopenshell.geom.create_shape(settings, beam)
         matrix = shape.transformation.matrix.data
@@ -585,46 +586,47 @@ plt.show()
 # How to add a new property set from a csv file #
 #################################################
 
-materials=model.by_type("IfcMaterial")
-materialList=ifcopenshell.util.selector.get_element_value(materials,'Identity.Class')
-materialList=list(set(materialList))
-with open(os.path.join(Path(__file__).parent, '..', 'results', 'list_material.csv'), 'w',newline='') as f:
-    properties=["Material","Density [kN/m3]","Concrete Compressive Strength [MPa]","Steel Yield Stress [MPa]","Steel Ultimate Stress [MPa]"]
-    csv.writer(f).writerow(properties)
+materials=model.by_type("IfcMaterial") #In model, filter all the elements by the type "IfcMaterial"
+materialList=ifcopenshell.util.selector.get_element_value(materials,'Identity.Class') #Get a list with all the materials class
+materialList=list(set(materialList)) #Get a list of unique materials
+with open(os.path.join(Path(__file__).parent, '..', 'results', 'list_material.csv'), 'w',newline='') as f: #Creates an empty csv file called "list_material.csv"
+    properties=["Material","Density [kN/m3]","Concrete Compressive Strength [MPa]","Steel Yield Stress [MPa]","Steel Ultimate Stress [MPa]"] # Property sets that will be added
+    csv.writer(f).writerow(properties) #Write the previous list into the csv file
     for material in materialList:
-         csv.writer(f).writerow([str(material)])
+         csv.writer(f).writerow([str(material)]) #Write each unique material into the csv file
     print('List with all materials was created and safed to list_material.csv')
+#Pause the script so the user can add the material properties
 print("-----------------------------------------------------------")
 print("Please, modify the file list_material.csv, which is located in the results folder") # only use Excel for editing, otherwise the file cannot be safed because the file is in use
 choice=input("Please, press (Y) when it is done. If you want to end the process, press any other: ")
-choice=choice.lower()
+choice=choice.lower() # Eliminate the issue if the user press "y" or "Y"
 if choice!="y":
-    sys.exit("Process ended")
+    sys.exit("Process ended") #If the user press a different letter rather than "Y", the whole script ends
 
-materialproperties=pd.read_csv(open(os.path.join(Path(__file__).parent.parent, 'results', 'list_material.csv')))
+materialproperties=pd.read_csv(open(os.path.join(Path(__file__).parent.parent, 'results', 'list_material.csv'))) #The script reads the csv file, after it has been modified
 
 # Loop for adding density 
 for material in materials:
     for i in range(materialproperties.shape[0]):
-        if materialproperties.iloc[i,1]!="nan":
-            if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')==materialproperties.iloc[i,0]:
-                pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon")
-                ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":materialproperties.iloc[i,1]})
-#Loop for adding concrete compressive strength
+        if materialproperties.iloc[i,1]!="nan": #It only runs the process for those property sets that have been added. If the cell is empty, then do nothing.
+            if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')==materialproperties.iloc[i,0]: #Relates each material with its material class
+                pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon") # Mass Density belongs to a property called "MaterialCommon", which has to be create before defining the density value
+                ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":materialproperties.iloc[i,1]}) #Assign the property set located in the csv file to the corresponding material
+#Loop for adding concrete compressive strength (It is not thoroughly commented since the procedure is the same as for "MassDensity")
 for material in materials:
     for i in range(materialproperties.shape[0]):
         if materialproperties.iloc[i,2]!="nan":
             if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')==materialproperties.iloc[i,0]:
                 pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialConcrete")
                 ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"CompressiveStrength":materialproperties.iloc[i,2]})
-#Loop for adding steel yield stress
+#Loop for adding steel yield stress (It is not thoroughly commented since the procedure is the same as for "MassDensity")
 for material in materials:
     for i in range(materialproperties.shape[0]):
         if materialproperties.iloc[i,3]!="nan":
             if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')==materialproperties.iloc[i,0]:
                 pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialSteel")
                 ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"YieldStress":materialproperties.iloc[i,3]})                
-#Loop for adding steel ultimate stress
+#Loop for adding steel ultimate stress (It is not thoroughly commented since the procedure is the same as for "MassDensity")
 for material in materials:
     for i in range(materialproperties.shape[0]):
         if materialproperties.iloc[i,4]!="nan":
@@ -633,5 +635,5 @@ for material in materials:
                 ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"UltimateStress":materialproperties.iloc[i,4]})
 
 
-model.write(os.path.join(Path(__file__).parent.parent.parent,'model','updated_model.ifc'))
+model.write(os.path.join(Path(__file__).parent.parent.parent,'model','updated_model.ifc')) #Save the modified ifc file in the parent parent folder
 print('New file "updated_model.ifc" is in folder model created')
