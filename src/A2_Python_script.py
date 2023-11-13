@@ -445,13 +445,13 @@ def get_endpoint_col(mesh_center, length, direction):
 def get_materials():
     for element in model.by_type('IfcBeam'):
         material = element.HasAssociations[0].RelatingMaterial.Name
-        print(material)
+        #print(material)
         if material not in material_list:
             material_list.append(material)
 
     for element in model.by_type('IfcColumn'):
         material = element.HasAssociations[0].RelatingMaterial.Name
-        print(material)
+        #print(material)
         if material not in material_list:
             material_list.append(material)
 
@@ -489,106 +489,139 @@ with open(os.path.join(Path(__file__).parent, '..', 'results', 'materials.txt'),
 
 print('List with all materials was created and safed to materials.txt') # proof that task is done and the list is up to date 
 
-# start plotting a simplified model with just the coordinates a line between them
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
+# # start plotting a simplified model with just the coordinates a line between them
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
 
-# Iterate over list beam_values and plot lines between start- and endpunkt
-for element in beam_values:
-    sp = element['Startpoint']
-    ep = element['Endpoint']
+# # Iterate over list beam_values and plot lines between start- and endpunkt
+# for element in beam_values:
+#     sp = element['Startpoint']
+#     ep = element['Endpoint']
 
-    if sp.shape == (1, 3) and ep.shape == (1, 3):
-        x_start, y_start, z_start = sp[0]
-        x_end, y_end, z_end = ep[0]
+#     if sp.shape == (1, 3) and ep.shape == (1, 3):
+#         x_start, y_start, z_start = sp[0]
+#         x_end, y_end, z_end = ep[0]
 
-        # Plot lines between start- and endpunkt
-        ax.plot([x_start, x_end], [y_start, y_end], [z_start, z_end], marker='o')
+#         # Plot lines between start- and endpunkt
+#         ax.plot([x_start, x_end], [y_start, y_end], [z_start, z_end], marker='o')
     
-    else:
-        print('Beam has no correct array')
-        print(len(sp), len(ep))
+#     else:
+#         print('Beam has no correct array')
+#         print(len(sp), len(ep))
 
-# Iterate over list column_values and plot lines between start- and endpunkt
-for element in column_values:
-    sp = element['Startpoint']
-    ep = element['Endpoint']
+# # Iterate over list column_values and plot lines between start- and endpunkt
+# for element in column_values:
+#     sp = element['Startpoint']
+#     ep = element['Endpoint']
 
-    if sp.shape == (1, 3) and ep.shape == (1, 3):
-        x_start, y_start, z_start = sp[0]
-        x_end, y_end, z_end = ep[0]
+#     if sp.shape == (1, 3) and ep.shape == (1, 3):
+#         x_start, y_start, z_start = sp[0]
+#         x_end, y_end, z_end = ep[0]
 
-        # Plot lines between start- and endpunkt
-        ax.plot([x_start, x_end], [y_start, y_end], [z_start, z_end], marker='o')
+#         # Plot lines between start- and endpunkt
+#         ax.plot([x_start, x_end], [y_start, y_end], [z_start, z_end], marker='o')
     
-    else:
-        print('Column has no correct array')
-        print(len(sp), len(ep))
+#     else:
+#         print('Column has no correct array')
+#         print(len(sp), len(ep))
 
-# optional titles
-ax.set_xlabel('X-Axis')
-ax.set_ylabel('Y-Axis')
-ax.set_zlabel('Z-Axis')
-ax.set_title('3D Plot of start- and endpoints')
+# # optional titles
+# ax.set_xlabel('X-Axis')
+# ax.set_ylabel('Y-Axis')
+# ax.set_zlabel('Z-Axis')
+# ax.set_title('3D Plot of start- and endpoints')
 
-# Show 3D-Plot
-plt.show()
+# # Show 3D-Plot
+# plt.show()
+
+############################################
+# Create new IFC file for simplified model #
+############################################
+
+# Create a new empty IFC4 file
+simplified_model = ifcopenshell.file(schema='IFC4')
+
+# Create a new list for all nodes
+nodes = []
+
+# Add the beam start and end nodes to the list nodes
+for beam_value in beam_values:
+    start_point = beam_value['Startpoint']
+    end_point = beam_value['Endpoint']
+    nodes.append((start_point, end_point))
+
+# Add the column coordinates to the list of points
+for column_value in column_values:
+    start_point = column_value['Startpoint']
+    end_point = column_value['Endpoint']
+    nodes.append((start_point, end_point))
+
+with open(os.path.join(Path(__file__).parent, '..', 'results', 'nodes.txt'), 'w') as f:
+    for element in nodes:
+        f.write(str(element) + '\n')
+
+# Add the coordinates from list nodes to the model
+
+# Write the IFC model to a file
+simplified_model.write(os.path.join(Path(__file__).parent.parent.parent,'model','simplified_model.ifc')) #Save the simplified ifc file in the parent parent folder
+
+print('New IFC was created and safed as "simplified_model.ifc" in folder model.')
 
 #################################################
 # How to add a new property set from a csv file #
 #################################################
 
-materials=model.by_type("IfcMaterial") #In model, filter all the elements by the type "IfcMaterial"
-materialList=ifcopenshell.util.selector.get_element_value(materials,'Identity.Class') #Get a list with all the materials class
-materialList=list(set(materialList)) #Get a list of unique materials
-with open(os.path.join(Path(__file__).parent, '..', 'results', 'list_material.csv'), 'w',newline='') as f: #Creates an empty csv file called "list_material.csv"
-    properties=["Material","Density [kN/m3]","Concrete Compressive Strength [MPa]","Steel Yield Stress [MPa]","Steel Ultimate Stress [MPa]"] # Property sets that will be added
-    csv.writer(f).writerow(properties) #Write the previous list into the csv file
-    for material in materialList:
-         csv.writer(f).writerow([str(material)]) #Write each unique material into the csv file
-    print('List with all materials was created and safed to list_material.csv')
-#Pause the script so the user can add the material properties
-print("-----------------------------------------------------------")
-print("Please, modify the file list_material.csv, which is located in the results folder") # only use Excel for editing, otherwise the file cannot be safed because the file is in use
-choice=input("Please, press (Y) when it is done. If you want to end the process, press any other: ")
-choice=choice.lower() # Eliminate the issue if the user press "y" or "Y"
-if choice!="y":
-    sys.exit("Process ended") #If the user press a different letter rather than "Y", the whole script ends
+# materials=model.by_type("IfcMaterial") #In model, filter all the elements by the type "IfcMaterial"
+# materialList=ifcopenshell.util.selector.get_element_value(materials,'Identity.Class') #Get a list with all the materials class
+# materialList=list(set(materialList)) #Get a list of unique materials
+# with open(os.path.join(Path(__file__).parent, '..', 'results', 'list_material.csv'), 'w',newline='') as f: #Creates an empty csv file called "list_material.csv"
+#     properties=["Material","Density [kN/m3]","Concrete Compressive Strength [MPa]","Steel Yield Stress [MPa]","Steel Ultimate Stress [MPa]"] # Property sets that will be added
+#     csv.writer(f).writerow(properties) #Write the previous list into the csv file
+#     for material in materialList:
+#          csv.writer(f).writerow([str(material)]) #Write each unique material into the csv file
+#     print('List with all materials was created and safed to list_material.csv')
+# #Pause the script so the user can add the material properties
+# print("-----------------------------------------------------------")
+# print("Please, modify the file list_material.csv, which is located in the results folder") # only use Excel for editing, otherwise the file cannot be safed because the file is in use
+# choice=input("Please, press (Y) when it is done. If you want to end the process, press any other: ")
+# choice=choice.lower() # Eliminate the issue if the user press "y" or "Y"
+# if choice!="y":
+#     sys.exit("Process ended") #If the user press a different letter rather than "Y", the whole script ends
 
-materialproperties=pd.read_csv(open(os.path.join(Path(__file__).parent.parent, 'results', 'list_material.csv'))) #The script reads the csv file, after it has been modified
+# materialproperties=pd.read_csv(open(os.path.join(Path(__file__).parent.parent, 'results', 'list_material.csv'))) #The script reads the csv file, after it has been modified
 
-# Loop for adding density 
-for material in materials:
-    for i in range(materialproperties.shape[0]):
-        if materialproperties.iloc[i,1]!="nan": #It only runs the process for those property sets that have been added. If the cell is empty, then do nothing.
-            if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')==materialproperties.iloc[i,0]: #Relates each material with its material class
-                pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon") # Mass Density belongs to a property called "MaterialCommon", which has to be create before defining the density value
-                ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":materialproperties.iloc[i,1]}) #Assign the property set located in the csv file to the corresponding material
-#Loop for adding concrete compressive strength (It is not thoroughly commented since the procedure is the same as for "MassDensity")
-for material in materials:
-    for i in range(materialproperties.shape[0]):
-        if materialproperties.iloc[i,2]!="nan":
-            if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')==materialproperties.iloc[i,0]:
-                pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialConcrete")
-                ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"CompressiveStrength":materialproperties.iloc[i,2]})
-#Loop for adding steel yield stress (It is not thoroughly commented since the procedure is the same as for "MassDensity")
-for material in materials:
-    for i in range(materialproperties.shape[0]):
-        if materialproperties.iloc[i,3]!="nan":
-            if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')==materialproperties.iloc[i,0]:
-                pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialSteel")
-                ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"YieldStress":materialproperties.iloc[i,3]})                
-#Loop for adding steel ultimate stress (It is not thoroughly commented since the procedure is the same as for "MassDensity")
-for material in materials:
-    for i in range(materialproperties.shape[0]):
-        if materialproperties.iloc[i,4]!="nan":
-            if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')==materialproperties.iloc[i,0]:
-                pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialSteel")
-                ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"UltimateStress":materialproperties.iloc[i,4]})
+# # Loop for adding density 
+# for material in materials:
+#     for i in range(materialproperties.shape[0]):
+#         if materialproperties.iloc[i,1]!="nan": #It only runs the process for those property sets that have been added. If the cell is empty, then do nothing.
+#             if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')==materialproperties.iloc[i,0]: #Relates each material with its material class
+#                 pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialCommon") # Mass Density belongs to a property called "MaterialCommon", which has to be create before defining the density value
+#                 ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"MassDensity":materialproperties.iloc[i,1]}) #Assign the property set located in the csv file to the corresponding material
+# #Loop for adding concrete compressive strength (It is not thoroughly commented since the procedure is the same as for "MassDensity")
+# for material in materials:
+#     for i in range(materialproperties.shape[0]):
+#         if materialproperties.iloc[i,2]!="nan":
+#             if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')==materialproperties.iloc[i,0]:
+#                 pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialConcrete")
+#                 ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"CompressiveStrength":materialproperties.iloc[i,2]})
+# #Loop for adding steel yield stress (It is not thoroughly commented since the procedure is the same as for "MassDensity")
+# for material in materials:
+#     for i in range(materialproperties.shape[0]):
+#         if materialproperties.iloc[i,3]!="nan":
+#             if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')==materialproperties.iloc[i,0]:
+#                 pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialSteel")
+#                 ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"YieldStress":materialproperties.iloc[i,3]})                
+# #Loop for adding steel ultimate stress (It is not thoroughly commented since the procedure is the same as for "MassDensity")
+# for material in materials:
+#     for i in range(materialproperties.shape[0]):
+#         if materialproperties.iloc[i,4]!="nan":
+#             if ifcopenshell.util.selector.get_element_value(material,'Identity.Class')==materialproperties.iloc[i,0]:
+#                 pset = ifcopenshell.api.run("pset.add_pset", model, product=material, name="Pset_MaterialSteel")
+#                 ifcopenshell.api.run("pset.edit_pset", model, pset=pset, properties={"UltimateStress":materialproperties.iloc[i,4]})
 
 
-model.write(os.path.join(Path(__file__).parent.parent.parent,'model','updated_model.ifc')) #Save the modified ifc file in the parent parent folder
-print('New file "updated_model.ifc" is in folder model created')
+# model.write(os.path.join(Path(__file__).parent.parent.parent,'model','updated_model.ifc')) #Save the modified ifc file in the parent parent folder
+# print('New file "updated_model.ifc" is in folder model created')
 
 ####################################
 # Code for one element for testing #
