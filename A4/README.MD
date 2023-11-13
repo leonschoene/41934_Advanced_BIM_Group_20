@@ -1,4 +1,9 @@
 # 41934 Advanced BIM Group 20 Assignment 4
+## Role Learning Level and Focus Area
+Since we are modelling and editing a model in BlenderBIM in conformance with the OpenBIM IFC standard, and adding various property sets to an IFC file using ifcOpenShell, we reached to the conclusion that the role learning level is targeted to Level 2. However, a small introduction for Level 1 is carried out
+
+The focus area is structural analysis.
+
 ## Use Case
 Structural engineers often need a simplified structural model from an architectural IFC file. Based on this, our script calculates the start and end points of each loadbearing beam and column and they are concected by lines. The start and end point represent the nodes and the lines the elements in a simplified structural model. In addition to the start point and end point, the cross-section and material type is extracted.
 
