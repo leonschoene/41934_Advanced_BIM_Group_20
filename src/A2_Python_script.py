@@ -1,9 +1,14 @@
+# Import area | import all necessary packages for ifcopenshell, mathematical operations, and plots
 import ifcopenshell
 import ifcopenshell.geom
 import ifcopenshell.util.shape
 import ifcopenshell.util.element
 import ifcopenshell.util.placement
 import ifcopenshell.util.selector
+import ifcopenshell.api
+import sys
+import csv
+import pandas as pd
 import os
 from pathlib import Path
 import numpy as np
@@ -12,7 +17,7 @@ import matplotlib.pyplot as plt
 
 modelname = "LLYN - STRU"
 
-# Code from teacher Martina for testing
+# Code from teacher Martina for testing if path directory works
 try:
     dir_path = Path(__file__).parent.parent
     model_rel_path = os.path.join('..', 'model', modelname + '.ifc')
@@ -26,7 +31,7 @@ except OSError:
     except OSError:
         print(f"ERROR: please check your model folder : {model_url} does not exist")
 
-# Your script goes here
+# Main script
 # 1. part: count elements 
 beams = model.by_type('IfcBeam')
 columns = model.by_type('IfcColumn')
@@ -38,13 +43,16 @@ print('slab: ', len(slab))
 
 
 
-#2. part: Create lists and get their values
+# 2. part: Main tool start
+# Create lists to store values from functions
 beam_values = []
 column_values = []
 material_list = []
 
+# Main function to collect information for every single beam and store it in the list "beam_values"
 def get_beam_values():
     for beam in model.by_type('IfcBeam'):
+        # variables collect different properties from a beam
         id = ifcopenshell.util.selector.get_element_value(beam, 'Tag')
         x = ifcopenshell.util.selector.get_element_value(beam, 'x')
         y = ifcopenshell.util.selector.get_element_value(beam, 'y')
@@ -62,6 +70,7 @@ def get_beam_values():
         mesh_center = get_mesh_center(mesh)
         startpoint = get_startpoint_beam(mesh_center, length, plane[2])
         endpoint = get_endpoint_beam(mesh_center, length, plane[2])
+        # collected properties stored in a dictionary for every beam
         beam ={
             'Tag' : id,
             'X' : x,
@@ -77,12 +86,14 @@ def get_beam_values():
             'Cross-Section' :  crosssection,
             'Material' : material
         }
-        beam_values.append(beam)
+        beam_values.append(beam) # add the new dictionary to the list beam_values
 
     return beam_values
 
+# Main function to collect information for every single column and store it in the list "column_values"
 def get_column_values():
     for column in model.by_type('IfcColumn'):
+        # variables collect different properties from a column
         id = ifcopenshell.util.selector.get_element_value(column, 'Tag')
         x = ifcopenshell.util.selector.get_element_value(column, 'x')
         y = ifcopenshell.util.selector.get_element_value(column, 'y')
@@ -100,6 +111,7 @@ def get_column_values():
         mesh_center = get_mesh_center(mesh)
         startpoint = get_startpoint_col(mesh_center, plane[3], plane[2])
         endpoint = get_endpoint_col(mesh_center, plane[3], plane[2])
+        # collected properties stored in a dictionary for every column
         column ={
             'Tag' : id,
             'X' : x,
@@ -115,22 +127,24 @@ def get_column_values():
             'Cross-section' : crosssection,
             'Material' : material
         }
-        column_values.append(column)
+        column_values.append(column) # add the new dictionary to the list column_values
 
     return column_values
 
 # find the plane or the direction in that the beam extend
 def get_beam_plane(beam):
+    # get vertices from the beam and the matrix from ifcopenshell
     settings = ifcopenshell.geom.settings()
     shape = ifcopenshell.geom.create_shape(settings, beam)
     slope = ifcopenshell.util.selector.get_element_value(beam, 'Pset_BeamCommon.Slope')
-    verts = shape.geometry.verts
-    grouped_verts = ifcopenshell.util.shape.get_vertices(shape.geometry)
+    verts = shape.geometry.verts # get the vertices
+    grouped_verts = ifcopenshell.util.shape.get_vertices(shape.geometry) # group the vertices in a matrix
     matrix = shape.transformation.matrix.data
     matrix = ifcopenshell.util.shape.get_shape_matrix(shape)
-    rotationmatrix = matrix[:3,:3]
-    v_lokal = np.array([[0], [0], [0]])
+    rotationmatrix = matrix[:3,:3] # create the rotationmatrix out the 4x4 matrix from ifcopenshell
+    v_lokal = np.array([[0], [0], [0]]) # create local direction vector
 
+    # Start to find the global direction by looking what is the biggest difference between the vertices
     # Set all max differences of points equal 0
     max_diff_x = 0
     max_diff_y = 0
@@ -153,6 +167,7 @@ def get_beam_plane(beam):
     # look for the maximum difference between each axis 
     max_diff_value = max(max_diff_x, max_diff_y, max_diff_z)
 
+    # numbers are necessary because it was easier to handle it for me in Python, the letter to confirm it easier
     if slope == 0: # a horizontal beam has no second direction, it extend only in one axis
         if max_diff_value == max_diff_x:
             plane = 'x'
@@ -164,6 +179,7 @@ def get_beam_plane(beam):
             plane = 'z'
             plane_value = 3
         
+        # Calculate the local direction of the beam
         if plane_value == 1 or plane_value == 12:
             v_lokal = np.array([[math.cos(math.radians(slope))], [math.sin(math.radians(slope))], [0]])
         elif plane_value == 2 or plane_value == 23:
@@ -174,7 +190,7 @@ def get_beam_plane(beam):
             print('No plane founded')
             print('Element Tag:', beam.Tag)
 
-        v_global = rotationmatrix @ v_lokal
+        v_global = rotationmatrix @ v_lokal # calculate the global direction of the beam
         return (plane, plane_value, v_global)
     
     else: # if beam has a slope, it also has a second direction that is >> third direction which is his own depth
@@ -212,6 +228,7 @@ def get_beam_plane(beam):
         sorted_plane_value = list(map(str, sorted_plane_value))
         plane_value = int("".join(sorted_plane_value))
 
+    # Calculate the local direction of the beam
     if plane_value == 1 or plane_value == 12:
         v_lokal = np.array([[math.cos(math.radians(slope))], [math.sin(math.radians(slope))], [0]])
     elif plane_value == 2 or plane_value == 23:
@@ -223,23 +240,26 @@ def get_beam_plane(beam):
         print('Element Tag:', beam.Tag)
         
 
-    v_global = rotationmatrix @ v_lokal
+    v_global = rotationmatrix @ v_lokal # calculate the global direction of the beam
 
     sorted_plane = sorted(plane)
     return (sorted_plane, plane_value, v_global)
 
 # find the plane or the direction in that the column extend
+# It is basically the same procedure like for the beam, but during the development that way was easier and never touch a running code...
 def get_column_plane(column):
+    # get vertices from the column and the matrix from ifcopenshell
     settings = ifcopenshell.geom.settings()
     shape = ifcopenshell.geom.create_shape(settings, column)
     slope = ifcopenshell.util.selector.get_element_value(column, 'Pset_ColumnCommon.Slope')
-    verts = shape.geometry.verts
-    grouped_verts = ifcopenshell.util.shape.get_vertices(shape.geometry)
+    verts = shape.geometry.verts # get the vertices
+    grouped_verts = ifcopenshell.util.shape.get_vertices(shape.geometry) # group the vertices in a matrix
     matrix = shape.transformation.matrix.data
     matrix = ifcopenshell.util.shape.get_shape_matrix(shape)
-    rotationmatrix = matrix[:3,:3]
-    v_lokal = np.array([[0], [0], [0]])
+    rotationmatrix = matrix[:3,:3] # create the rotationmatrix out the 4x4 matrix from ifcopenshell
+    v_lokal = np.array([[0], [0], [0]]) # create local direction vector
 
+    # Start to find the global direction by looking what is the biggest difference between the vertices
     # Set all max differences of points equal 0
     max_diff_x = 0
     max_diff_y = 0
@@ -268,10 +288,10 @@ def get_column_plane(column):
         plane_value = 3
         v_lokal = np.array([[0], [0], [1]])
 
-        v_global = rotationmatrix @ v_lokal # global direction vector
+        v_global = rotationmatrix @ v_lokal # calculate global direction vector
         return (plane, plane_value, v_global, length)
 
-    elif slope == 0: # a horizontal beam has no second direction, it extend only in one axis
+    elif slope == 0: # a horizontal column has no second direction, it extend only in one axis
         if max_diff_value == max_diff_x:
             plane = 'x'
             plane_value = 1
@@ -346,7 +366,8 @@ def get_column_plane(column):
     sorted_plane = sorted(plane)
     return (sorted_plane, plane_value, v_global, length)
 
-
+# The function creates a mesh and returns the absolute global direction of the element
+# Beginning is like in get_beam_plane or get_column_plane
 def get_coordinates(element):
     settings = ifcopenshell.geom.settings()
     shape = ifcopenshell.geom.create_shape(settings, element)
@@ -368,7 +389,7 @@ def get_coordinates(element):
 
     return v_abs
 
-
+# create a mesh of the element and return the absolute mesh by using the rotationmatrix from ifcopenshell
 def get_element_coordinates(element):
     settings = ifcopenshell.geom.settings()
     shape = ifcopenshell.geom.create_shape(settings, element)
@@ -388,7 +409,7 @@ def get_element_coordinates(element):
 
     return mesh_abs
 
-
+# get the center/middlepoint of the mesh
 def get_mesh_center(mesh):
     # Calculate the mean of the mesh coordinates
     mesh_center = np.mean(mesh, axis=0)
@@ -397,28 +418,29 @@ def get_mesh_center(mesh):
 
 def get_startpoint_beam(mesh_center, length, direction):
     # Calculate the startpoint from the beam
-    sp_beam = mesh_center - length/2000*direction.T
+    sp_beam = mesh_center - length/2000*direction.T # 2000 because 1/2 of the length and the factor 1000 to convert it from millimeter to meter
 
     return sp_beam
 
 def get_endpoint_beam(mesh_center, length, direction):
     # Calculate the startpoint from the beam
-    ep_beam = mesh_center + length/2000*direction.T
+    ep_beam = mesh_center + length/2000*direction.T # 2000 because 1/2 of the length and the factor 1000 to convert it from millimeter to meter
 
     return ep_beam
 
 def get_startpoint_col(mesh_center, length, direction):
     # Calculate the startpoint from the column
-    sp_col = mesh_center - length/2*direction.T
+    sp_col = mesh_center - length/2*direction.T # 2 because 1/2 of the length and the factor 1000 is not needed because the length from the column comes at meter
 
     return sp_col
 
 def get_endpoint_col(mesh_center, length, direction):
     # Calculate the startpoint from the column
-    ep_col = mesh_center + length/2*direction.T
+    ep_col = mesh_center + length/2*direction.T # 2 because 1/2 of the length and the factor 1000 is not needed because the length from the column comes at meter
 
     return ep_col
 
+# collect materials from beams and columns and store it in the list material_list
 def get_materials():
     for element in model.by_type('IfcBeam'):
         material = element.HasAssociations[0].RelatingMaterial.Name
@@ -440,72 +462,76 @@ def get_materials():
 # Code for the entire model, store values for all beams in the list #
 #####################################################################
 
-# # Get list over searching for plane
-# beams = get_beam_values()
-# columns = get_column_values()
-# materials = get_materials()
+# calling the main functions and material function to start
+beams = get_beam_values()
+columns = get_column_values()
+materials = get_materials()
 
-# with open(os.path.join(Path(__file__).parent, '..', 'results', 'list_beams.txt'), 'w') as f:
-#     for element in beams:
-#         f.write(str(element) + '\n')
+# open a new text file and write the mentioned properties for every beam in it
+with open(os.path.join(Path(__file__).parent, '..', 'results', 'list_beams.txt'), 'w') as f:
+    for element in beams:
+        f.write(str(element) + '\n')
 
-# print('List with all beams was created and safed to list_beams.txt')
+print('List with all beams was created and safed to list_beams.txt') # proof that task is done and the list is up to date 
 
-# with open(os.path.join(Path(__file__).parent, '..', 'results', 'list_columns.txt'), 'w') as f:
-#     for element in columns:
-#         f.write(str(element) + '\n')
+# open a new text file and write the mentioned properties for every column in it
+with open(os.path.join(Path(__file__).parent, '..', 'results', 'list_columns.txt'), 'w') as f:
+    for element in columns:
+        f.write(str(element) + '\n')
 
-# print('List with all columns was created and safed to list_columns.txt')
+print('List with all columns was created and safed to list_columns.txt') # proof that task is done and the list is up to date 
 
-# with open(os.path.join(Path(__file__).parent, '..', 'results', 'materials.txt'), 'w') as f:
-#     for element in materials:
-#         f.write(str(element) + '\n')
+# open a new text file and write the mentioned properties for every material in it
+with open(os.path.join(Path(__file__).parent, '..', 'results', 'materials.txt'), 'w') as f:
+    for element in materials:
+        f.write(str(element) + '\n')
 
-# print('List with all materials was created and safed to materials.txt')
+print('List with all materials was created and safed to materials.txt') # proof that task is done and the list is up to date 
 
-# fig = plt.figure()
-# ax = fig.add_subplot(111, projection='3d')
+# start plotting a simplified model with just the coordinates a line between them
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
 
-# # Iterate over list beam_values and plot lines between start- and endpunkt
-# for element in beam_values:
-#     sp = element['Startpoint']
-#     ep = element['Endpoint']
+# Iterate over list beam_values and plot lines between start- and endpunkt
+for element in beam_values:
+    sp = element['Startpoint']
+    ep = element['Endpoint']
 
-#     if sp.shape == (1, 3) and ep.shape == (1, 3):
-#         x_start, y_start, z_start = sp[0]
-#         x_end, y_end, z_end = ep[0]
+    if sp.shape == (1, 3) and ep.shape == (1, 3):
+        x_start, y_start, z_start = sp[0]
+        x_end, y_end, z_end = ep[0]
 
-#         # Plot lines between start- and endpunkt
-#         ax.plot([x_start, x_end], [y_start, y_end], [z_start, z_end], marker='o')
+        # Plot lines between start- and endpunkt
+        ax.plot([x_start, x_end], [y_start, y_end], [z_start, z_end], marker='o')
     
-#     else:
-#         print('Beam has no correct array')
-#         print(len(sp), len(ep))
+    else:
+        print('Beam has no correct array')
+        print(len(sp), len(ep))
 
-# # Iterate over list column_values and plot lines between start- and endpunkt
-# for element in column_values:
-#     sp = element['Startpoint']
-#     ep = element['Endpoint']
+# Iterate over list column_values and plot lines between start- and endpunkt
+for element in column_values:
+    sp = element['Startpoint']
+    ep = element['Endpoint']
 
-#     if sp.shape == (1, 3) and ep.shape == (1, 3):
-#         x_start, y_start, z_start = sp[0]
-#         x_end, y_end, z_end = ep[0]
+    if sp.shape == (1, 3) and ep.shape == (1, 3):
+        x_start, y_start, z_start = sp[0]
+        x_end, y_end, z_end = ep[0]
 
-#         # Plot lines between start- and endpunkt
-#         ax.plot([x_start, x_end], [y_start, y_end], [z_start, z_end], marker='o')
+        # Plot lines between start- and endpunkt
+        ax.plot([x_start, x_end], [y_start, y_end], [z_start, z_end], marker='o')
     
-#     else:
-#         print('Column has no correct array')
-#         print(len(sp), len(ep))
+    else:
+        print('Column has no correct array')
+        print(len(sp), len(ep))
 
-# # optinal titles
-# ax.set_xlabel('X-Axis')
-# ax.set_ylabel('Y-Axis')
-# ax.set_zlabel('Z-Axis')
-# ax.set_title('3D Plot of start- and endpoints')
+# optional titles
+ax.set_xlabel('X-Axis')
+ax.set_ylabel('Y-Axis')
+ax.set_zlabel('Z-Axis')
+ax.set_title('3D Plot of start- and endpoints')
 
-# # Show 3D-Plot
-# plt.show()
+# Show 3D-Plot
+plt.show()
 
 ####################################
 # Code for one element for testing #
@@ -553,14 +579,11 @@ def get_materials():
 #     print(space.HasPropertySets)
 #     print(space.HasPropertySets)
 
+
+
 #################################################
 # How to add a new property set from a csv file #
 #################################################
-import ifcopenshell.api
-import sys
-import csv
-import pandas as pd
-
 
 materials=model.by_type("IfcMaterial")
 materialList=ifcopenshell.util.selector.get_element_value(materials,'Identity.Class')
