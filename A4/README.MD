@@ -38,6 +38,9 @@ Note that in order to understand how this tool works step by step, the script ha
 * It is important to add the properties with Excel. Otherwise, the text editor gives error because the csv file is in use and can not be saved.
 
 ## Future improvements
-
-
-
+* Developing the script in order to consider all the bearing elements (not only beams and columns, but slabs, walls and footings).
+* In order to improve the interaction process with the user, it would be nice to make the script more user-friendly through HTML.
+* Improving units managment, so user can work in any desired unit system.
+* Interactive plot, i.e. making it possible to move around in the plot and not just a picture of it.
+* Including external loads and support conditions.
+* Exporting all the data for performing a structural analysis.
