@@ -15,7 +15,7 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 
-modelname = "LLYN - STRU"
+modelname = "LLYN - STRU" #Name of the model, which lies in the "model" folder
 
 # Code from TA Martina for testing if path directory works
 try:
@@ -534,54 +534,6 @@ ax.set_title('3D Plot of start- and endpoints')
 # Show 3D-Plot
 plt.show()
 
-####################################
-# Code for one element for testing #
-####################################
-
-# column = model.by_guid('2Bbtc4Qtb4v9USChXqpW23')#[2]
-# plane = get_column_plane(column)
-# print(plane[3])
-# print(column.Tag)
-
-# beam_coordinates = get_beam_coordinates(beam)
-# mesh = get_beam_coordinates(beam)
-
-# # Calculate the mesh center
-# mesh_center = get_mesh_center(mesh)
-
-# # Get the x, y, and z coordinates of the beam
-# x = beam_coordinates[:, 0]
-# y = beam_coordinates[:, 1]
-# z = beam_coordinates[:, 2].reshape(-1, 1)
-
-# # Plot the beam in 3D
-# fig = plt.figure()
-# ax = fig.add_subplot(projection='3d')
-# ax.scatter(x, y, z)
-# #ax.set_aspect('equal')
-# ax.set_xlabel('x')
-# ax.set_ylabel('y')
-# ax.set_zlabel('z')
-
-# # Plot the mesh center
-# ax.plot(mesh_center[0], mesh_center[1], mesh_center[2], 'b*')
-
-# # Show the plot
-# plt.show()
-
-# print(mesh_center)
-
-##################################################
-# Test if everything works from teacher Martina: #
-##################################################
-
-# spaces = model.by_type("IfcBeamType")
-# for space in spaces:
-#     print(space.HasPropertySets)
-#     print(space.HasPropertySets)
-
-
-
 #################################################
 # How to add a new property set from a csv file #
 #################################################
@@ -637,3 +589,49 @@ for material in materials:
 
 model.write(os.path.join(Path(__file__).parent.parent.parent,'model','updated_model.ifc')) #Save the modified ifc file in the parent parent folder
 print('New file "updated_model.ifc" is in folder model created')
+
+####################################
+# Code for one element for testing #
+####################################
+
+# column = model.by_guid('2Bbtc4Qtb4v9USChXqpW23')#[2]
+# plane = get_column_plane(column)
+# print(plane[3])
+# print(column.Tag)
+
+# beam_coordinates = get_beam_coordinates(beam)
+# mesh = get_beam_coordinates(beam)
+
+# # Calculate the mesh center
+# mesh_center = get_mesh_center(mesh)
+
+# # Get the x, y, and z coordinates of the beam
+# x = beam_coordinates[:, 0]
+# y = beam_coordinates[:, 1]
+# z = beam_coordinates[:, 2].reshape(-1, 1)
+
+# # Plot the beam in 3D
+# fig = plt.figure()
+# ax = fig.add_subplot(projection='3d')
+# ax.scatter(x, y, z)
+# #ax.set_aspect('equal')
+# ax.set_xlabel('x')
+# ax.set_ylabel('y')
+# ax.set_zlabel('z')
+
+# # Plot the mesh center
+# ax.plot(mesh_center[0], mesh_center[1], mesh_center[2], 'b*')
+
+# # Show the plot
+# plt.show()
+
+# print(mesh_center)
+
+##################################################
+# Test if everything works from teacher Martina: #
+##################################################
+
+# spaces = model.by_type("IfcBeamType")
+# for space in spaces:
+#     print(space.HasPropertySets)
+#     print(space.HasPropertySets)
