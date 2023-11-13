@@ -13,6 +13,7 @@ Additionally, a CSV file is created with all materials that are defined in the m
 A video showing the use case can be found on this link. (REMEMBER TO ATTACH LINK)
 
 ## Level 1: Introduction
+First of all, the user has to install a code editor such as "Visual Studio Code" and then install python (conda).
 The libraries needed to run the script are:
 * numpy
 * ifcopenshell
