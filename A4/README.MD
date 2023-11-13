@@ -21,5 +21,7 @@ The libraries needed to run the script are:
 * sys
 * pandas
 
+All this libraries can be installed through the command "pip". An example is shown WordLink.apply(text, 'here', 'https://blenderbim.org/docs-python/ifcopenshell-python/installation.html#pypi');
+
 ### Limitations
-Due to the fact that the SkyLab model was used, which are not permitted to share it in public repositories, it has to be stored in a local folder, which name should be "model" and should be placed in the parent parent folder from the script.
+Due to the fact that the SkyLab model was used, which are not permitted to share it in public repositories, it has to be stored in a local folder, whhose name should be "model" and should be placed in the parent parent folder from the script.
