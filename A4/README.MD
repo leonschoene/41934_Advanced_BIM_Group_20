@@ -11,7 +11,6 @@ Additionally, a CSV file is created with all materials that are defined in the m
 
 
 A video showing the use case can be found on [this link.](https://external.ink?to=www.youtube.com/watch?v=qbk8SYr7DuA&list=PLWuWtXSyAvKSiMLpkFOxh2hRPt-7aHBCY&index=2)
-<a href="https://external.ink?to=www.youtube.com/watch?v=qbk8SYr7DuA&list=PLWuWtXSyAvKSiMLpkFOxh2hRPt-7aHBCY&index=2">Coding Beauty</a>
 
 ## Level 1: Introduction
 First of all, the user has to install a code editor such as "Visual Studio Code" and then install python (conda).
