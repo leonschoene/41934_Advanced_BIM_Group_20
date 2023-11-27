@@ -20,3 +20,12 @@ We think it’s not a matter of having less or more choices in the use case. At 
 
 ## Was the number of tools for the course ok - should we have more or less? - if so which ones would you leave out?
 For our point of view, less tools would have been better. Some of the tools like Linked Data and Node-RED were just introduced, but we do not know how to apply them in our code. So, we believe that less tools which are explained better and implemented.
+
+# Future for Advanced use of OpenBIM
+## Are you likely to use OpenBIM tools in your thesis?
+It will depend on the topic of the thesis and also if there is a company included or not. If there is the possibility to use OpenBIM tools for the thesis, we will use them. OpenBIM shows us how to fasten processes and collect or add information effectively. 
+## Are you likely to use OpenBIM tools in your professional life in the next 10 years?
+Through regulations for bigger projects from governments, we will be forced to use BIM in our professional lives. Therefore, closed BIM is not a practical solution for developing a project where multiple contractors are in, we guess that we will use OpenBIM in our lives after graduation.
+# Wrap up
+Conclude the journey through A1-A5
+We started both on a low level of using OpenBIM, but we came with some experience in programming outside of ifcopenshell. The first assignment was a bit of complicated work because it felt that Excel was not made to handle this kind of big data to get information easily. The following assignment was much more interesting and also much more work. We had to dig deeper into IFC and ifcopenshell, a new field in programming for us. This assignment was the first time that we learned a lot by using ifcopenshell and Python to get information out of the model to use them for our purpose. In this assignment, we tried to get the start and end points of each element to use the data in other FEM software. Despite we could not export an IFC file, we developed the code to get the information and saw what is possible with OpenBIM. The same feeling we had in the third assignment when we added information to the model. We were able to change the model in a few seconds which takes hours if you had to do that manually. From using software to coming in contact with BIM or 3D modelling, in this course, we gained knowledge in using Python in OpenBIM and writing or creating tutorials in a way that others can understand the tool and use it properly.
