@@ -21,6 +21,11 @@ We think it’s not a matter of having less or more choices in the use case. At 
 ## Was the number of tools for the course ok - should we have more or less? - if so which ones would you leave out?
 For our point of view, less tools would have been better. Some of the tools like Linked Data and Node-RED were just introduced, but we do not know how to apply them in our code. So, we believe that less tools which are explained better and implemented.
 
+# Feedback about the tutorial
+The group that assesed our tutorial pointed out that the tool address the use case succesfully and the structure of the GitHub is clearly organized and the video tutorials are really valuable (A little bit long in duration, though). 
+
+Since the background of the group that provided feedback is different from structural engineering, there were some aspects of the tool (i.e. concrete strength and yield strength) which were difficult to understand for them and therefore, they experienced some issues when interacting with the tool.
+
 # Future for Advanced use of OpenBIM
 ## Are you likely to use OpenBIM tools in your thesis?
 It will depend on the topic of the thesis and also if there is a company included or not. If there is the possibility to use OpenBIM tools for the thesis, we will use them. OpenBIM shows us how to fasten processes and collect or add information effectively. 
