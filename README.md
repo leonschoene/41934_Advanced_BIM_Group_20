@@ -24,7 +24,7 @@ For our point of view, less tools would have been better. Some of the tools like
 # Feedback about the tutorial
 The group that assesed our tutorial pointed out that the tool address the use case succesfully and the structure of the GitHub is clearly organized and the video tutorials are really valuable (A little bit long in duration, though). 
 
-Since the background of the group that provided feedback is different from structural engineering, there were some aspects of the tool (i.e. concrete strength and yield strength) which were difficult to understand for them and therefore, they experienced some issues when interacting with the tool.
+Since the background of the group that provided feedback is different from structural engineering, there were some aspects of the tool (i.e. concrete strength and yield strength) which were difficult to understand for them and therefore, they experienced some issues when interacting with the tool. Despite some issues due to another focus area, the tool worked for them after watching the last video the full demonstration of the BIM tool.
 
 # Future for Advanced use of OpenBIM
 ## Are you likely to use OpenBIM tools in your thesis?
