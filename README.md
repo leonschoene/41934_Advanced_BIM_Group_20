@@ -9,7 +9,7 @@ Our journey started with knowledge about closed BIM softwares, but no knowledge 
 In addition, we gained knowledge about how to manipulate the IFC file and add properties to the model. In our case the script adds properties from an Excel file in assignment 3 that you can read in detail in our [report](A3/README.md).
 
 ### What else do you still need to learn
-There are still a bunch of different things that it would be nice to learn, such as coding skills, HTML, machine learning, etc.
+There are still a bunch of different things that it would be nice to learn, such as coding skills, HTML, machine learning, etc. Especially Python combined with ifcopenshell offer libraries we did not use and are interesting to know more about to develop other helpful tools. During the course we got a short introduction into Linked Data and Node-RED that would be amazing to learn to automate and enrich models more and publish it in a well looking enviornment on the internet.
 
 ### How you might use OpenBIM in the future
 It can be used for extract and input information on an IFC model in an efficient way. It might even be used for creating an IFC model from the scratch, and end up performing structural analysis.
