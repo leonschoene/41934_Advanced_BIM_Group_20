@@ -1,4 +1,5 @@
-# Learning Experience
+# Project Reflection
+## Learning Experience
 Our journey started with knowledge about closed BIM softwares, but no knowledge related to OpenBIM, IFC and some basics skills about Python. Therefore, we were in OpenBIM Modeller Level 1. Now we consider ourselves:
 * Modeller Level 2 (since we worked with BlenderBIM and IFC).
 * Analyst Level 3 (since we developed a [Python programme](src/A2_Python_script.py) using ifcOpenShell).
@@ -7,10 +8,10 @@ Our journey started with knowledge about closed BIM softwares, but no knowledge 
 
 In addition, we gained knowledge about how to manipulate the IFC file and add properties to the model. In our case the script adds properties from an Excel file in assignment 3 that you can read in detail in our [report](A3/README.md).
 
-##	What else do you still need to learn
+### What else do you still need to learn
 There are still a bunch of different things that it would be nice to learn, such as coding skills, HTML, machine learning, etc.
 
-## How you might use OpenBIM in the future
+### How you might use OpenBIM in the future
 It can be used for extract and input information on an IFC model in an efficient way. It might even be used for creating an IFC model from the scratch, and end up performing structural analysis.
 
 # Process of developing the tutorial
